@@ -16,8 +16,6 @@ public interface PostService extends IService<PostEntity> {
 
     void updatePost(SavePostRequest request);
 
-    void updateUsername(String oldUsername, String newUsername);
-
     Page<SimplePostVo> getPostPage(QueryPostPageRequest request);
 
     PostVo getPostById(Long id);

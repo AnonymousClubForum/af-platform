@@ -2,9 +2,13 @@ package org.anonymous.af.controller;
 
 import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.model.entity.UserEntity;
+import org.anonymous.af.model.request.LoginRequest;
 import org.anonymous.af.model.request.SaveUserRequest;
+import org.anonymous.af.model.response.LoginResponse;
+import org.anonymous.af.model.response.UserVo;
 import org.anonymous.af.service.UserService;
 import org.anonymous.af.utils.UserContextUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,20 +25,21 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public BaseResponse<String> login(@RequestParam(value = "username") String username,
-                                      @RequestParam(value = "password") String password) {
-        userService.login(username, password);
-        return BaseResponse.success("登录成功");
+    public BaseResponse<LoginResponse> login(@RequestBody LoginRequest request) {
+        return BaseResponse.success(userService.login(request.getUsername(), request.getPassword())); // 返回token
     }
 
     @PostMapping("/update")
-    public BaseResponse<String> updatePassword(@RequestBody SaveUserRequest request) {
+    public BaseResponse<String> updateUser(@RequestBody SaveUserRequest request) {
         userService.updateUser(request);
         return BaseResponse.success("用户信息更新成功");
     }
 
     @GetMapping("/get")
-    public BaseResponse<UserEntity> getUser() {
-        return BaseResponse.success(UserContextUtil.getUser());
+    public BaseResponse<UserVo> getCurrentUser() {
+        UserEntity user = UserContextUtil.getUser();
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(user, userVo);
+        return BaseResponse.success(userVo);
     }
 }

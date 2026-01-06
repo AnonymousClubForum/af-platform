@@ -28,6 +28,12 @@ public class PostController {
         return BaseResponse.success("发布成功");
     }
 
+    @DeleteMapping("/delete")
+    public BaseResponse<String> deletePost(@RequestParam Long id) {
+        postService.removeById(id);
+        return BaseResponse.success("发布成功");
+    }
+
     @GetMapping("/get")
     public BaseResponse<PostVo> getPost(@RequestParam Long id) {
         return BaseResponse.success(postService.getPostById(id));

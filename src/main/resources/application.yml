@@ -1,6 +1,18 @@
 spring:
   application:
     name: af-platform
+  cloud:
+    service-registry:
+      auto-registration:
+        enabled: true
+    nacos:
+      server-addr: 101.132.235.45:8848
+      username: nacos
+      password: nacos
+      discovery:
+        service: platform
+        group: DEFAULT_GROUP
+        namespace: prd
 
 server:
   port: 8080

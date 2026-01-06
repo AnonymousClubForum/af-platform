@@ -14,10 +14,11 @@ import org.anonymous.af.mapper.UserMapper;
 import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.request.remote.UploadImageRequest;
+import org.anonymous.af.model.response.LoginResponse;
 import org.anonymous.af.model.response.remote.UploadImageResponse;
-import org.anonymous.af.service.PostService;
 import org.anonymous.af.service.UserService;
 import org.anonymous.af.service.remote.StorageService;
+import org.anonymous.af.utils.JwtUtil;
 import org.anonymous.af.utils.PasswordEncoderUtil;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,6 @@ import java.util.regex.Pattern;
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> implements UserService {
     @Resource
     private StorageService storageService;
-    @Resource
-    private PostService postService;
 
     /**
      * 根据用户名获取实体
@@ -63,7 +62,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     /**
      * 用户登录
      */
-    public void login(String username, String password) {
+    public LoginResponse login(String username, String password) {
         UserEntity userEntity = getByUsername(username);
         if (userEntity == null) {
             throw new AfException("用户不存在");
@@ -72,6 +71,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             throw new AfException("密码错误");
         }
         UserContextUtil.setUser(userEntity);
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setToken(JwtUtil.generateToken(userEntity.getId(), userEntity.getUsername()));
+        loginResponse.setUser(userEntity);
+        return loginResponse;
     }
 
     /**
@@ -110,9 +113,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         UserEntity userEntity = UserContextUtil.getUser();
         if (userEntity == null) {
             throw new AfException("用户不存在");
-        }
-        if (StrUtil.isNotBlank(request.getUsername())) {
-            postService.updateUsername(userEntity.getUsername(), request.getUsername());
         }
         BeanUtil.copyProperties(request, userEntity, true);
         if (StrUtil.isNotBlank(request.getPassword())) {

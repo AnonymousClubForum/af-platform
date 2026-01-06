@@ -1,6 +1,7 @@
 package org.anonymous.af.common;
 
 import lombok.Data;
+import org.anonymous.af.constants.ResponseConstants;
 
 /**
  * 统一返回结果封装

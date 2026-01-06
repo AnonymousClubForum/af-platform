@@ -9,7 +9,7 @@ import org.anonymous.af.common.BaseEntity;
 @EqualsAndHashCode(callSuper = true)
 @TableName(value = "t_post")
 public class PostEntity extends BaseEntity {
-    private String username;
+    private Long userId;
 
     private String title;
 
