@@ -3,4 +3,4 @@ spring:
     nacos:
       server-addr: 101.132.235.45:8848/nacos
   datasource:
-    url: jdbc:mysql://101.132.235.45:3306/af_platform
+    url: jdbc:mysql://101.132.235.45:3306/af_platform?createDatabaseIfNotExist=true

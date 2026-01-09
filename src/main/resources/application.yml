@@ -16,7 +16,7 @@ spring:
         group: DEFAULT_GROUP
         namespace: prd
   datasource:
-    url: jdbc:mysql://mysql:3306/af_platform
+    url: jdbc:mysql://mysql:3306/af_platform?createDatabaseIfNotExist=true
     username: root
     password: Anonymous1234
     driver-class-name: com.mysql.cj.jdbc.Driver
