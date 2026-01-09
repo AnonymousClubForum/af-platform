@@ -18,24 +18,24 @@ jobs:
 
       # 步骤2：设置Docker Buildx（支持多平台构建，可选但推荐）
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.12.0
+        uses: docker/setup-buildx-action@v3
 
-      # 步骤3：登录Docker仓库（以Docker Hub为例，也可替换为GitHub Container Registry）
-      - name: Login to Docker Hub
-        if: github.event_name == 'push' # 仅推送代码时登录（PR时不推送镜像）
-        uses: docker/login-action@v3.6.0
+      # 步骤3：登录GitHub镜像仓库GHCR
+      - name: Login to GHCR
+        uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }} # GitHub仓库Secrets中配置的Docker用户名
-          password: ${{ secrets.DOCKERHUB_PASSWORD }} # GitHub仓库Secrets中配置的Docker密码/令牌
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
-      # 步骤4：构建并推送Docker镜像
+      # 步骤4：构建并推送Docker镜像到GHCR
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v5
         with:
           context: . # 构建上下文为当前目录
           push: ${{ github.event_name == 'push' }} # PR时仅构建，推送代码时推送镜像
           tags: | # 镜像标签，用提交哈希作为版本号
-            monaxiastr/af-platform:latest
-            monaxiastr/af-platform:${{ github.sha }}
-          cache-from: type=registry,ref=monaxiastr/af-platform:buildcache
-          cache-to: type=registry,ref=monaxiastr/af-platform:buildcache,mode=max
+            ghcr.io/monaxiastr/af-platform:latest
+            ghcr.io/monaxiastr/af-platform:${{ github.sha }}
+          cache-from: type=registry,ref=ghcr.io/monaxiastr/af-platform:buildcache
+          cache-to: type=registry,ref=ghcr.io/monaxiastr/af-platform:buildcache,mode=max
