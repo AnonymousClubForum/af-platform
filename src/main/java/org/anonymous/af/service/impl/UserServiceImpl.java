@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.anonymous.af.constants.Gender;
 import org.anonymous.af.exception.AfException;
 import org.anonymous.af.mapper.UserMapper;
+import org.anonymous.af.model.UserContext;
 import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.request.remote.UploadImageRequest;
@@ -72,9 +73,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if (!PasswordEncoderUtil.matches(password, userEntity.getPassword())) {
             throw new AfException("密码错误");
         }
-        UserContextUtil.setUser(userEntity);
+        UserContext userContext = new UserContext();
+        userContext.setUsername(username);
+        userContext.setId(userEntity.getId());
+        UserContextUtil.setUser(userContext);
         LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtUtil.generateToken(userEntity.getId(), userEntity.getUsername()));
+        loginResponse.setToken(jwtUtil.generateToken(userContext.getId(), userContext.getUsername()));
         loginResponse.setUser(userEntity);
         return loginResponse;
     }
@@ -112,10 +116,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      * 更新用户信息
      */
     public void updateUser(SaveUserRequest request) {
-        UserEntity userEntity = UserContextUtil.getUser();
-        if (userEntity == null) {
-            throw new AfException("用户不存在");
-        }
+        UserEntity userEntity = getById(UserContextUtil.getUser().getId());
         BeanUtil.copyProperties(request, userEntity, true);
         if (StrUtil.isNotBlank(request.getPassword())) {
             checkPassword(request.getPassword());
@@ -134,6 +135,5 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             userEntity.setAvatarThumbNailId(uploadImageResponse.getThumbnailId());
         }
         this.updateById(userEntity);
-        UserContextUtil.setUser(userEntity);
     }
 }

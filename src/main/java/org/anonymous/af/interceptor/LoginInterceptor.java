@@ -6,7 +6,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.anonymous.af.constants.ResponseConstants;
-import org.anonymous.af.model.entity.UserEntity;
+import org.anonymous.af.model.UserContext;
 import org.anonymous.af.utils.JwtUtil;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Component;
@@ -39,12 +39,9 @@ public class LoginInterceptor implements HandlerInterceptor {
         try {
             Claims claims = jwtUtil.parseToken(token);
             // 从载荷中获取用户ID校验
-            UserEntity user = UserContextUtil.getUser();
-            if (user == null || !user.getId().toString().equals(claims.getId()) || !user.getUsername().equals(claims.getSubject())) {
-                response.setStatus(ResponseConstants.UNAUTHORIZED);
-                response.getWriter().write("登录信息错误");
-                return false;
-            }
+            UserContext user = new UserContext();
+            user.setId(Long.parseLong(claims.getId()));
+            user.setUsername(claims.getSubject());
         } catch (RuntimeException e) {
             // Token过期/无效，返回401
             response.setStatus(401);

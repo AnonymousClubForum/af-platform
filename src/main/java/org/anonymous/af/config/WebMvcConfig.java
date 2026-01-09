@@ -20,6 +20,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 注册登录拦截器，拦截所有请求（排除登录接口）
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**") // 拦截所有路径
-                .excludePathPatterns("/api/login"); // 排除登录接口
+                .excludePathPatterns(
+                        "/user/login",
+                        "/user/register"
+                );
     }
 }

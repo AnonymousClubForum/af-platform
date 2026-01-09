@@ -1,7 +1,6 @@
 package org.anonymous.af.controller;
 
 import org.anonymous.af.common.BaseResponse;
-import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.LoginRequest;
 import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.response.LoginResponse;
@@ -38,9 +37,8 @@ public class UserController {
 
     @GetMapping("/get")
     public BaseResponse<UserVo> getCurrentUser() {
-        UserEntity user = UserContextUtil.getUser();
         UserVo userVo = new UserVo();
-        BeanUtils.copyProperties(user, userVo);
+        BeanUtils.copyProperties(userService.getById(UserContextUtil.getUser().getId()), userVo);
         return BaseResponse.success(userVo);
     }
 }
