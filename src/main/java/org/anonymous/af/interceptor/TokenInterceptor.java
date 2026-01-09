@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
- * 登录拦截器：解析Token，获取用户信息并放入ThreadLocal
+ * 令牌校验拦截器：解析Token，获取用户信息并放入ThreadLocal
  */
 @Component
-public class LoginInterceptor implements HandlerInterceptor {
+public class TokenInterceptor implements HandlerInterceptor {
     @Resource
     private JwtUtil jwtUtil;
 
