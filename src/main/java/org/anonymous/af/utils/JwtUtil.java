@@ -1,9 +1,11 @@
 package org.anonymous.af.utils;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 // JWT工具类
@@ -20,21 +22,19 @@ public class JwtUtil {
     /**
      * 生成JWT Token
      *
-     * @param userId   用户ID
-     * @param username 用户名
+     * @param userId 用户ID
      * @return JWT Token
      */
-    public String generateToken(Long userId, String username) {
+    public String generateToken(Long userId) {
         // 过期时间 = 当前时间 + 过期时长
         Date expireDate = new Date(System.currentTimeMillis() + expireTime);
 
         // 生成Token
         return Jwts.builder()
-                .setId(userId.toString())           // 设置载荷
-                .setSubject(username)
-                .setIssuedAt(new Date())            // 设置签发时间
-                .setExpiration(expireDate)          // 设置过期时间
-                .signWith(SignatureAlgorithm.HS256, secret) // 签名算法+密钥
+                .id(userId.toString())  // 设置载荷
+                .issuedAt(new Date())   // 设置签发时间
+                .expiration(expireDate) // 设置过期时间
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8))) // 密钥
                 .compact(); // 生成最终Token
     }
 
@@ -42,18 +42,20 @@ public class JwtUtil {
      * 解析Token，获取载荷中的用户信息
      *
      * @param token JWT Token
-     * @return 载荷中的用户信息（Map）
+     * @return 载荷中的用户Id
      */
-    public Claims parseToken(String token) {
+    public String parseIdFromToken(String token) {
         try {
             // 解析Token并验证签名、过期时间
             return Jwts.parser()
-                    .setSigningKey(secret) // 设置验证密钥
-                    .parseClaimsJws(token)         // 解析Token
-                    .getBody();                    // 获取载荷
+                    .verifyWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8))) // 设置验证密钥
+                    .build()
+                    .parseEncryptedClaims(token)    // 解析Token
+                    .getPayload()
+                    .getId();                       // 获取载荷
         } catch (ExpiredJwtException e) {
             throw new RuntimeException("Token已过期");
-        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Token无效或被篡改");
         }
     }

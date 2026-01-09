@@ -1,7 +1,6 @@
 package org.anonymous.af.interceptor;
 
 import cn.hutool.core.util.StrUtil;
-import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,11 +36,9 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         // 验证并解析JWT Token
         try {
-            Claims claims = jwtUtil.parseToken(token);
             // 从载荷中获取用户ID校验
             UserContext user = new UserContext();
-            user.setId(Long.parseLong(claims.getId()));
-            user.setUsername(claims.getSubject());
+            user.setId(Long.parseLong(jwtUtil.parseIdFromToken(token)));
         } catch (RuntimeException e) {
             // Token过期/无效，返回401
             response.setStatus(401);

@@ -78,7 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         userContext.setId(userEntity.getId());
         UserContextUtil.setUser(userContext);
         LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtUtil.generateToken(userContext.getId(), userContext.getUsername()));
+        loginResponse.setToken(jwtUtil.generateToken(userContext.getId()));
         loginResponse.setUser(userEntity);
         return loginResponse;
     }
