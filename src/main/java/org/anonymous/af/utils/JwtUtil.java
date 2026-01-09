@@ -11,8 +11,8 @@ import java.util.Date;
 // JWT工具类
 @Component
 public class JwtUtil {
-    // 签名密钥（生产环境需配置在配置文件，且足够复杂，建议至少32位）
-    @Value("${jwt.secret:af-32-bit-secret-key-anonymous}")
+    // 签名密钥
+    @Value("${jwt.secret:af-256-bit-secret-key-anonymous-forum}")
     private String secret;
 
     // Token过期时间（2小时，单位：毫秒）
