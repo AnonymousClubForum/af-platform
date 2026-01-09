@@ -56,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      * 密码复杂度校验
      */
     private void checkPassword(String password) {
-        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\\\d)(?=.*[@$!%*?&_#\\-+=:;,<.>])[A-Za-z\\\\d@$!%*?&_#\\-+=:;,<.>]{8,}$";
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&_#\\-+=:;,<.>])[A-Za-z\\d@$!%*?&_#\\-+=:;,<.>]{8,}$";
         if (!Pattern.matches(regex, password)) {
             throw new IllegalArgumentException("密码需8位以上，包含大小写字母、数字和特殊字符");
         }
