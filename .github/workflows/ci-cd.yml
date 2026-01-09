@@ -34,8 +34,8 @@ jobs:
         with:
           context: . # 构建上下文为当前目录
           push: ${{ github.event_name == 'push' }} # PR时仅构建，推送代码时推送镜像
-          tags: | # 镜像标签
+          tags: | # 镜像标签，用提交哈希作为版本号
             monaxiastr/af-platform:latest
-            monaxiastr/af-platform:${{ github.sha }} # 用提交哈希作为版本号
+            monaxiastr/af-platform:${{ github.sha }}
           cache-from: type=registry,ref=monaxiastr/af-platform:buildcache
           cache-to: type=registry,ref=monaxiastr/af-platform:buildcache,mode=max
