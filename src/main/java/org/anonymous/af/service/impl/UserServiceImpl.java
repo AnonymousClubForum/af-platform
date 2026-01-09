@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.anonymous.af.constants.Gender;
+import org.anonymous.af.constants.GenderEnum;
 import org.anonymous.af.exception.AfException;
 import org.anonymous.af.mapper.UserMapper;
 import org.anonymous.af.model.UserContext;
@@ -56,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      * 密码复杂度校验
      */
     private void checkPassword(String password) {
-        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\\\d)(?=.*[@$!%*?&_#\\-+=:;,<.>])[A-Za-z\\\\d@$!%*?&_#\\-+=:;,<.>]{8,}$";
         if (!Pattern.matches(regex, password)) {
             throw new IllegalArgumentException("密码需8位以上，包含大小写字母、数字和特殊字符");
         }
@@ -91,7 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             throw new IllegalArgumentException("用户名已被使用");
         }
         checkPassword(request.getPassword());
-        if (Arrays.stream(Gender.values()).noneMatch(gender -> request.getGender().equals(gender.getValue()))) {
+        if (StrUtil.isNotBlank(request.getGender()) && Arrays.stream(GenderEnum.values()).noneMatch(gender -> request.getGender().equals(gender.getGender()))) {
             throw new IllegalArgumentException("性别类型不可用");
         }
         UserEntity userEntity = new UserEntity();
@@ -122,7 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             checkPassword(request.getPassword());
             userEntity.setPassword(PasswordEncoderUtil.encode(request.getPassword()));
         }
-        if (StrUtil.isNotBlank(request.getGender()) && Arrays.stream(Gender.values()).noneMatch(gender -> request.getGender().equals(gender.getValue()))) {
+        if (StrUtil.isNotBlank(request.getGender()) && Arrays.stream(GenderEnum.values()).noneMatch(gender -> request.getGender().equals(gender.getGender()))) {
             throw new IllegalArgumentException("性别类型不可用");
         }
         if (request.getAvatar() != null) {

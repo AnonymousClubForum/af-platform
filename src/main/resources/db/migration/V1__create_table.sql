@@ -3,10 +3,10 @@ CREATE TABLE IF NOT EXISTS `af_platform`.`t_user`
     `id`                   BIGINT NOT NULL,
     `username`             VARCHAR(50)  DEFAULT NULL COMMENT '用户名',
     `password`             VARCHAR(100) DEFAULT NULL COMMENT '密码(建议加密存储)',
-    `gender`               VARCHAR(20)  DEFAULT NULL COMMENT '性别(如：男/女/未知)',
+    `gender`               VARCHAR(20)  DEFAULT '秘密' COMMENT '性别(如：男/女/秘密/其他)',
     `avatar_id`            BIGINT       DEFAULT NULL COMMENT '头像文件ID(关联文件表)',
     `avatar_thumb_nail_id` BIGINT       DEFAULT NULL COMMENT '头像缩略图文件ID(关联文件表)',
-    `is_admin`             TINYINT      DEFAULT NULL COMMENT '是否为管理员',
+    `is_admin`             TINYINT      DEFAULT 0 COMMENT '是否为管理员',
     `ctime`                TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
     `utime`                TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
