@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    nacos:
+      server-addr: nacos:8848/nacos
+  datasource:
+    url: jdbc:mysql://mysql:3306/af_platform
