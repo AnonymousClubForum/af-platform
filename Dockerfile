@@ -1,5 +1,5 @@
 # 阶段1：构建应用
-FROM maven:3.9.8-openjdk-21-slim AS builder
+FROM maven:3.9.12-amazoncorretto-21-debian AS builder
 WORKDIR /app
 # 复制pom.xml先下载依赖（利用Docker缓存，依赖不变时无需重新下载）
 COPY pom.xml .
@@ -10,7 +10,7 @@ COPY src ./src
 RUN mvn clean package
 
 # 阶段2：运行应用
-FROM openjdk:21-jre-slim
+FROM openjdk:21-ea-21-jdk-slim
 WORKDIR /app
 # 从构建阶段复制打包好的jar包
 COPY --from=builder /app/target/*.jar app.jar
