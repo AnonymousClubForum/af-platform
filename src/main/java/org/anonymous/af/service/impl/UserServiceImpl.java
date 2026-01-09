@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> implements UserService {
     @Resource
     private StorageService storageService;
+    @Resource
+    private JwtUtil jwtUtil;
 
     /**
      * 根据用户名获取实体
@@ -72,7 +74,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
         UserContextUtil.setUser(userEntity);
         LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(JwtUtil.generateToken(userEntity.getId(), userEntity.getUsername()));
+        loginResponse.setToken(jwtUtil.generateToken(userEntity.getId(), userEntity.getUsername()));
         loginResponse.setUser(userEntity);
         return loginResponse;
     }

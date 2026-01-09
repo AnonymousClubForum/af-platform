@@ -2,6 +2,7 @@ package org.anonymous.af.interceptor;
 
 import cn.hutool.core.util.StrUtil;
 import io.jsonwebtoken.Claims;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.anonymous.af.constants.ResponseConstants;
@@ -16,6 +17,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
  */
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
+    @Resource
+    private JwtUtil jwtUtil;
 
     /**
      * 请求处理前执行：解析Token，查询用户信息
@@ -34,7 +37,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         // 验证并解析JWT Token
         try {
-            Claims claims = JwtUtil.parseToken(token);
+            Claims claims = jwtUtil.parseToken(token);
             // 从载荷中获取用户ID校验
             UserEntity user = UserContextUtil.getUser();
             if (user == null || !user.getId().toString().equals(claims.getId()) || !user.getUsername().equals(claims.getSubject())) {

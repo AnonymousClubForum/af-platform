@@ -7,10 +7,12 @@ import org.anonymous.af.model.request.QueryPostPageRequest;
 import org.anonymous.af.model.request.SavePostRequest;
 import org.anonymous.af.model.response.PostVo;
 import org.anonymous.af.model.response.SimplePostVo;
+import org.springframework.stereotype.Service;
 
 /**
  * 帖子接口
  */
+@Service
 public interface PostService extends IService<PostEntity> {
     void createPost(SavePostRequest request);
 

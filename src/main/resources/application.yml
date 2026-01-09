@@ -6,13 +6,25 @@ spring:
       auto-registration:
         enabled: true
     nacos:
-      server-addr: 101.132.235.45:8848
+      server-addr: 101.132.235.45:8848/nacos
       username: nacos
       password: nacos
       discovery:
         service: platform
         group: DEFAULT_GROUP
         namespace: prd
+  datasource:
+    url: jdbc:mysql://101.132.235.45:3306/af_platform
+    username: root
+    password: Anonymous1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    enabled: true  # 开启Flyway
+    locations: classpath:db/migration  # 脚本存放目录
+    baseline-on-migrate: true  # 首次使用时，若数据库已有表，自动创建基线
+    clean-disabled: true  # 禁用clean命令
+    encoding: UTF-8  # 脚本编码
+    baseline-version: 0  # 基线版本
 
 server:
   port: 8080

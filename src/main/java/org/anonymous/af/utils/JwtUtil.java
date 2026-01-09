@@ -11,11 +11,11 @@ import java.util.Date;
 public class JwtUtil {
     // 签名密钥（生产环境需配置在配置文件，且足够复杂，建议至少32位）
     @Value("${jwt.secret:af-32-bit-secret-key-anonymous}")
-    private static String secret;
+    private String secret;
 
     // Token过期时间（2小时，单位：毫秒）
     @Value("${jwt.expire-time:7200000}")
-    private static long expireTime;
+    private long expireTime;
 
     /**
      * 生成JWT Token
@@ -24,7 +24,7 @@ public class JwtUtil {
      * @param username 用户名
      * @return JWT Token
      */
-    public static String generateToken(Long userId, String username) {
+    public String generateToken(Long userId, String username) {
         // 过期时间 = 当前时间 + 过期时长
         Date expireDate = new Date(System.currentTimeMillis() + expireTime);
 
@@ -44,7 +44,7 @@ public class JwtUtil {
      * @param token JWT Token
      * @return 载荷中的用户信息（Map）
      */
-    public static Claims parseToken(String token) {
+    public Claims parseToken(String token) {
         try {
             // 解析Token并验证签名、过期时间
             return Jwts.parser()

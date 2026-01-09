@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.response.LoginResponse;
+import org.springframework.stereotype.Service;
 
 /**
  * 用户服务接口
  */
+@Service
 public interface UserService extends IService<UserEntity> {
     UserEntity getByUsername(String username);
 
