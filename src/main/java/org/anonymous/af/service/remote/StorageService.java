@@ -7,11 +7,11 @@ import cn.hutool.json.JSONUtil;
 import jakarta.annotation.Resource;
 import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.config.AfProperties;
-import org.anonymous.af.constants.ResponseConstants;
 import org.anonymous.af.exception.AfException;
 import org.anonymous.af.exception.ThirdPartyException;
 import org.anonymous.af.model.request.remote.UploadImageRequest;
 import org.anonymous.af.model.response.remote.UploadImageResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,7 +28,7 @@ public class StorageService {
             String responseBody = response.body();
             BaseResponse<UploadImageResponse> baseResponse = JSONUtil.toBean(responseBody, new TypeReference<>() {
             }, false);
-            if (!baseResponse.getCode().equals(ResponseConstants.SUCCESS) || baseResponse.getData() == null) {
+            if (!baseResponse.getCode().equals(HttpStatus.OK.value()) || baseResponse.getData() == null) {
                 throw new AfException("请求错误");
             }
             return baseResponse.getData();

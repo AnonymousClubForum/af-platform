@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.anonymous.af.constants.GenderEnum;
 import org.anonymous.af.exception.AfException;
 import org.anonymous.af.mapper.UserMapper;
@@ -26,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> implements UserService {
     @Resource
     private StorageService storageService;
@@ -59,9 +61,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if (!PasswordEncoderUtil.matches(password, userEntity.getPassword())) {
             throw new AfException("密码错误");
         }
+        log.debug("用户信息正确，开始构建返回");
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(jwtUtil.generateToken(userEntity.getId()));
         loginResponse.setUser(userEntity);
+        log.debug("返回信息构建完成");
         return loginResponse;
     }
 

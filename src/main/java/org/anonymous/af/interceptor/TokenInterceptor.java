@@ -5,10 +5,10 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.anonymous.af.constants.ResponseConstants;
 import org.anonymous.af.model.UserContext;
 import org.anonymous.af.utils.JwtUtil;
 import org.anonymous.af.utils.UserContextUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -31,7 +31,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
         if (StrUtil.isBlank(token)) {
             // 未携带Token，返回401
-            response.setStatus(ResponseConstants.UNAUTHORIZED);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
         } else {
             // 验证并解析JWT Token
             try {
@@ -40,7 +40,7 @@ public class TokenInterceptor implements HandlerInterceptor {
                 user.setId(Long.parseLong(jwtUtil.parseIdFromToken(token)));
             } catch (Exception e) {
                 // Token过期/无效，返回401
-                response.setStatus(ResponseConstants.UNAUTHORIZED);
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
             }
         }
         return true; // 放行请求

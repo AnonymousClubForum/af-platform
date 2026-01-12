@@ -1,7 +1,7 @@
 package org.anonymous.af.common;
 
 import lombok.Data;
-import org.anonymous.af.constants.ResponseConstants;
+import org.springframework.http.HttpStatus;
 
 /**
  * 统一返回结果封装
@@ -15,30 +15,30 @@ public class BaseResponse<T> {
     /**
      * 响应信息
      */
-    private String msg;
+    private String message;
     /**
      * 响应数据
      */
     private T data;
 
-    private BaseResponse(Integer code, String msg, T data) {
+    private BaseResponse(Integer code, String message, T data) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
         this.data = data;
     }
 
     // 成功响应（有数据）
     public static <T> BaseResponse<T> success(T data) {
-        return new BaseResponse<>(ResponseConstants.SUCCESS, "操作成功", data);
+        return new BaseResponse<>(HttpStatus.OK.value(), "操作成功", data);
     }
 
     // 失败响应
-    public static <T> BaseResponse<T> error(String msg) {
-        return new BaseResponse<>(ResponseConstants.ERROR, msg, null);
+    public static <T> BaseResponse<T> error(String message) {
+        return new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, null);
     }
 
     // 请求错误响应
-    public static <T> BaseResponse<T> badRequest(String msg) {
-        return new BaseResponse<>(ResponseConstants.BAD_REQUEST, msg, null);
+    public static <T> BaseResponse<T> badRequest(String message) {
+        return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), message, null);
     }
 }
