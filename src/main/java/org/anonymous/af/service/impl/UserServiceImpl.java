@@ -61,11 +61,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if (!PasswordEncoderUtil.matches(password, userEntity.getPassword())) {
             throw new AfException("密码错误");
         }
-        log.debug("用户信息正确，开始构建返回");
+        log.info("用户信息正确，开始构建返回");
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(jwtUtil.generateToken(userEntity.getId()));
         loginResponse.setUser(userEntity);
-        log.debug("返回信息构建完成");
+        log.info("返回信息构建完成");
         return loginResponse;
     }
 
