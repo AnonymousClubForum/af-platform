@@ -7,11 +7,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import org.anonymous.af.constants.GenderEnum;
 import org.anonymous.af.exception.AfException;
 import org.anonymous.af.mapper.UserMapper;
-import org.anonymous.af.model.UserContext;
 import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.request.remote.UploadImageRequest;
@@ -26,9 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
-@Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> implements UserService {
     @Resource
@@ -53,16 +49,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 
     /**
-     * 密码复杂度校验
-     */
-    private void checkPassword(String password) {
-        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&_#\\-+=:;,<.>])[A-Za-z\\d@$!%*?&_#\\-+=:;,<.>]{8,}$";
-        if (!Pattern.matches(regex, password)) {
-            throw new IllegalArgumentException("密码需8位以上，包含大小写字母、数字和特殊字符");
-        }
-    }
-
-    /**
      * 用户登录
      */
     public LoginResponse login(String username, String password) {
@@ -73,12 +59,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if (!PasswordEncoderUtil.matches(password, userEntity.getPassword())) {
             throw new AfException("密码错误");
         }
-        UserContext userContext = new UserContext();
-        userContext.setUsername(username);
-        userContext.setId(userEntity.getId());
-        UserContextUtil.setUser(userContext);
         LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtUtil.generateToken(userContext.getId()));
+        loginResponse.setToken(jwtUtil.generateToken(userEntity.getId()));
         loginResponse.setUser(userEntity);
         return loginResponse;
     }
@@ -90,7 +72,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if (getByUsername(request.getUsername()) != null) {
             throw new IllegalArgumentException("用户名已被使用");
         }
-        checkPassword(request.getPassword());
         if (StrUtil.isNotBlank(request.getGender()) && Arrays.stream(GenderEnum.values()).noneMatch(gender -> request.getGender().equals(gender.getGender()))) {
             throw new IllegalArgumentException("性别类型不可用");
         }
@@ -119,7 +100,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         UserEntity userEntity = getById(UserContextUtil.getUser().getId());
         BeanUtil.copyProperties(request, userEntity, true);
         if (StrUtil.isNotBlank(request.getPassword())) {
-            checkPassword(request.getPassword());
             userEntity.setPassword(PasswordEncoderUtil.encode(request.getPassword()));
         }
         if (StrUtil.isNotBlank(request.getGender()) && Arrays.stream(GenderEnum.values()).noneMatch(gender -> request.getGender().equals(gender.getGender()))) {

@@ -9,7 +9,7 @@ import java.util.Date;
 public class PostVo {
     private Long id;
 
-    private String username;
+    private Long userId;
 
     private String title;
 

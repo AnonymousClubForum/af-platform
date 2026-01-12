@@ -12,8 +12,6 @@ import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.io.IOException;
-
 /**
  * 令牌校验拦截器：解析Token，获取用户信息并放入ThreadLocal
  */
@@ -34,28 +32,17 @@ public class TokenInterceptor implements HandlerInterceptor {
         if (StrUtil.isBlank(token)) {
             // 未携带Token，返回401
             response.setStatus(ResponseConstants.UNAUTHORIZED);
+        } else {
+            // 验证并解析JWT Token
             try {
-                response.getWriter().write("未登录，请先登录");
-            } catch (IOException ignore) {
+                // 从载荷中获取用户ID校验
+                UserContext user = new UserContext();
+                user.setId(Long.parseLong(jwtUtil.parseIdFromToken(token)));
+            } catch (Exception e) {
+                // Token过期/无效，返回401
+                response.setStatus(ResponseConstants.UNAUTHORIZED);
             }
-            return true;
         }
-
-        // 验证并解析JWT Token
-        try {
-            // 从载荷中获取用户ID校验
-            UserContext user = new UserContext();
-            user.setId(Long.parseLong(jwtUtil.parseIdFromToken(token)));
-        } catch (Exception e) {
-            // Token过期/无效，返回401
-            response.setStatus(401);
-            try {
-                response.getWriter().write(e.getMessage());
-            } catch (IOException ignore) {
-            }
-            return true;
-        }
-
         return true; // 放行请求
     }
 
@@ -64,6 +51,10 @@ public class TokenInterceptor implements HandlerInterceptor {
      */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        UserContextUtil.clear(); // 必须清除，避免线程复用导致数据泄漏
+        try {
+            UserContextUtil.clear(); // 必须清除，避免线程复用导致数据泄漏
+        } catch (Exception e) {
+            log.error("Error occurred while clearing user context", e);
+        }
     }
 }

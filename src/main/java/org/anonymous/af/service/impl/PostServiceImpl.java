@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
 import org.anonymous.af.mapper.PostMapper;
 import org.anonymous.af.model.entity.PostEntity;
 import org.anonymous.af.model.entity.UserEntity;
@@ -23,11 +24,8 @@ import java.util.List;
 
 @Service
 public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> implements PostService {
-    private final UserService userService;
-
-    public PostServiceImpl(UserService userService) {
-        this.userService = userService;
-    }
+    @Resource
+    private UserService userService;
 
     /**
      * 新增帖子

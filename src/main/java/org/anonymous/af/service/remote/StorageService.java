@@ -5,7 +5,6 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONUtil;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.config.AfProperties;
 import org.anonymous.af.constants.ResponseConstants;
@@ -15,7 +14,6 @@ import org.anonymous.af.model.request.remote.UploadImageRequest;
 import org.anonymous.af.model.response.remote.UploadImageResponse;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
 public class StorageService {
     @Resource
