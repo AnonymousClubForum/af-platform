@@ -78,6 +78,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
         PostEntity postEntity = this.getById(id);
         PostVo postVo = new PostVo();
         BeanUtil.copyProperties(postEntity, postVo, true);
+        UserEntity userEntity = userService.getById(postEntity.getUserId());
+        postVo.setUserName(userEntity.getUsername());
         return postVo;
     }
 }

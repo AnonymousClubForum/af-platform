@@ -11,6 +11,8 @@ public class PostVo {
 
     private Long userId;
 
+    private String userName;
+
     private String title;
 
     private String content;
