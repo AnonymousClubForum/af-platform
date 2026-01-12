@@ -5,7 +5,6 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.anonymous.af.model.UserContext;
 import org.anonymous.af.utils.JwtUtil;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.http.HttpStatus;
@@ -35,9 +34,8 @@ public class TokenInterceptor implements HandlerInterceptor {
         } else {
             // 验证并解析JWT Token
             try {
-                // 从载荷中获取用户ID校验
-                UserContext user = new UserContext();
-                user.setId(Long.parseLong(jwtUtil.parseIdFromToken(token)));
+                // 从载荷中获取用户ID
+                UserContextUtil.setUserId(Long.parseLong(jwtUtil.parseIdFromToken(token)));
             } catch (Exception e) {
                 // Token过期/无效，返回401
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());

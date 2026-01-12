@@ -34,7 +34,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
         PostEntity postEntity = new PostEntity();
         BeanUtil.copyProperties(request, postEntity, true);
         postEntity.setId(IdWorker.getId());
-        postEntity.setUserId(UserContextUtil.getUser().getId());
+        postEntity.setUserId(UserContextUtil.getUserId());
         this.save(postEntity);
     }
 

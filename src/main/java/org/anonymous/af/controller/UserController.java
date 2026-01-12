@@ -4,12 +4,12 @@ import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.model.request.LoginRequest;
 import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.response.LoginResponse;
-import org.anonymous.af.model.response.UserVo;
 import org.anonymous.af.service.UserService;
-import org.anonymous.af.utils.UserContextUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -32,12 +32,5 @@ public class UserController {
     public BaseResponse<String> updateUser(@RequestBody SaveUserRequest request) {
         userService.updateUser(request);
         return BaseResponse.success("用户信息更新成功");
-    }
-
-    @GetMapping("/get")
-    public BaseResponse<UserVo> getCurrentUser() {
-        UserVo userVo = new UserVo();
-        BeanUtils.copyProperties(userService.getById(UserContextUtil.getUser().getId()), userVo);
-        return BaseResponse.success(userVo);
     }
 }

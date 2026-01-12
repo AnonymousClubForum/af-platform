@@ -101,7 +101,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      * 更新用户信息
      */
     public void updateUser(SaveUserRequest request) {
-        UserEntity userEntity = getById(UserContextUtil.getUser().getId());
+        UserEntity userEntity = getById(UserContextUtil.getUserId());
         BeanUtil.copyProperties(request, userEntity, true);
         if (StrUtil.isNotBlank(request.getPassword())) {
             userEntity.setPassword(PasswordEncoderUtil.encode(request.getPassword()));
