@@ -20,7 +20,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 注册日志拦截器，拦截所有请求
-        registry.addInterceptor(logInterceptor);
+        registry.addInterceptor(logInterceptor).addPathPatterns("/**");
         // 注册令牌校验拦截器，拦截所有请求（排除登录注册接口）
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**") // 拦截所有路径
