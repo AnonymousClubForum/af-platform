@@ -5,9 +5,9 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.anonymous.af.exception.TokenException;
 import org.anonymous.af.utils.JwtUtil;
 import org.anonymous.af.utils.UserContextUtil;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -30,16 +30,10 @@ public class TokenInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
         if (StrUtil.isBlank(token)) {
             // 未携带Token，返回401
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            throw new TokenException("请求未负载token");
         } else {
             // 验证并解析JWT Token
-            try {
-                // 从载荷中获取用户ID
-                UserContextUtil.setUserId(Long.parseLong(jwtUtil.parseIdFromToken(token)));
-            } catch (Exception e) {
-                // Token过期/无效，返回401
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            }
+            UserContextUtil.setUserId(Long.parseLong(jwtUtil.parseIdFromToken(token)));
         }
         return true; // 放行请求
     }
@@ -49,10 +43,6 @@ public class TokenInterceptor implements HandlerInterceptor {
      */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        try {
-            UserContextUtil.clear(); // 必须清除，避免线程复用导致数据泄漏
-        } catch (Exception e) {
-            log.error("Error occurred while clearing user context", e);
-        }
+        UserContextUtil.clear(); // 必须清除，避免线程复用导致数据泄漏
     }
 }

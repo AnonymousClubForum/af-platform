@@ -25,6 +25,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 用户信息校验异常
+     */
+    @ExceptionHandler(TokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public BaseResponse<?> handleTokenException(TokenException e) {
+        log.error("用户信息校验异常：", e);
+        return BaseResponse.error(e.getMessage());
+    }
+
+    /**
      * 第三方请求错误异常
      */
     @ExceptionHandler(ThirdPartyException.class)
