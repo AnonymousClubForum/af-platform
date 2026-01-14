@@ -1,9 +1,11 @@
 package org.anonymous.af.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.response.LoginResponse;
+import org.anonymous.af.model.response.UserVo;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface UserService extends IService<UserEntity> {
+    Page<UserVo> getPage(Long pageNum, Long pageSize, String username);
+
     UserEntity getByUsername(String username);
 
     LoginResponse login(String username, String password);

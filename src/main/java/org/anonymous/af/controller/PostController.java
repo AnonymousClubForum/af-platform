@@ -2,7 +2,6 @@ package org.anonymous.af.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.anonymous.af.common.BaseResponse;
-import org.anonymous.af.model.request.QueryPostPageRequest;
 import org.anonymous.af.model.request.SavePostRequest;
 import org.anonymous.af.model.response.PostVo;
 import org.anonymous.af.model.response.SimplePostVo;
@@ -40,7 +39,10 @@ public class PostController {
     }
 
     @GetMapping("/get_page")
-    public BaseResponse<Page<SimplePostVo>> getPostPage(@RequestBody QueryPostPageRequest request) {
-        return BaseResponse.success(postService.getPostPage(request));
+    public BaseResponse<Page<SimplePostVo>> getPostPage(@RequestParam("page_num") Long pageNum,
+                                                        @RequestParam("page_size") Long pageSize,
+                                                        @RequestParam(value = "user_id", required = false) Long userId,
+                                                        @RequestParam(value = "search_content", required = false) String searchContent) {
+        return BaseResponse.success(postService.getPostPage(pageNum, pageSize, userId, searchContent));
     }
 }

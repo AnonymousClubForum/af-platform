@@ -1,15 +1,14 @@
 package org.anonymous.af.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.model.request.LoginRequest;
 import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.response.LoginResponse;
+import org.anonymous.af.model.response.UserVo;
 import org.anonymous.af.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -32,5 +31,12 @@ public class UserController {
     public BaseResponse<String> updateUser(@RequestBody SaveUserRequest request) {
         userService.updateUser(request);
         return BaseResponse.success("用户信息更新成功");
+    }
+
+    @GetMapping("/get_page")
+    public BaseResponse<Page<UserVo>> getPage(@RequestParam("page_num") Long pageNum,
+                                              @RequestParam("page_size") Long pageSize,
+                                              @RequestParam("username") String username) {
+        return BaseResponse.success(userService.getPage(pageNum, pageSize, username));
     }
 }

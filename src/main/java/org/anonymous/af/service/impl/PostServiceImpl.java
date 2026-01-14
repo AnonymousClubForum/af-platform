@@ -1,7 +1,6 @@
 package org.anonymous.af.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -11,7 +10,6 @@ import jakarta.annotation.Resource;
 import org.anonymous.af.mapper.PostMapper;
 import org.anonymous.af.model.entity.PostEntity;
 import org.anonymous.af.model.entity.UserEntity;
-import org.anonymous.af.model.request.QueryPostPageRequest;
 import org.anonymous.af.model.request.SavePostRequest;
 import org.anonymous.af.model.response.PostVo;
 import org.anonymous.af.model.response.SimplePostVo;
@@ -19,8 +17,6 @@ import org.anonymous.af.service.PostService;
 import org.anonymous.af.service.UserService;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> implements PostService {
@@ -50,17 +46,14 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
     /**
      * 分页查询帖子
      */
-    public Page<SimplePostVo> getPostPage(QueryPostPageRequest request) {
-        Page<PostEntity> page = new Page<>(request.getPageNum(), request.getPageSize());
+    public Page<SimplePostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent) {
+        Page<PostEntity> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<PostEntity> queryWrapper = new LambdaQueryWrapper<>();
-        if (StrUtil.isNotBlank(request.getUsername())) {
-            LambdaQueryWrapper<UserEntity> userEntityLambdaQueryWrapper = new LambdaQueryWrapper<>();
-            userEntityLambdaQueryWrapper.like(UserEntity::getUsername, request.getUsername());
-            List<UserEntity> userEntityList = userService.list(userEntityLambdaQueryWrapper);
-            queryWrapper.in(CollUtil.isNotEmpty(userEntityList), PostEntity::getUserId, userEntityList);
+        queryWrapper.eq(userId != null, PostEntity::getUserId, userId);
+        if (StrUtil.isNotBlank(searchContent)) {
+            queryWrapper.like(PostEntity::getTitle, searchContent);
+            queryWrapper.like(PostEntity::getContent, searchContent);
         }
-        queryWrapper.like(StrUtil.isNotBlank(request.getTitle()), PostEntity::getTitle, request.getTitle());
-        queryWrapper.like(StrUtil.isNotBlank(request.getContent()), PostEntity::getContent, request.getContent());
         Page<PostEntity> postPage = this.page(page, queryWrapper);
         Page<SimplePostVo> postVoPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
         postVoPage.setRecords(postPage.getRecords().stream().map((entity) -> {

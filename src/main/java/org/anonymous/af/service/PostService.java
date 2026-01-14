@@ -3,7 +3,6 @@ package org.anonymous.af.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.anonymous.af.model.entity.PostEntity;
-import org.anonymous.af.model.request.QueryPostPageRequest;
 import org.anonymous.af.model.request.SavePostRequest;
 import org.anonymous.af.model.response.PostVo;
 import org.anonymous.af.model.response.SimplePostVo;
@@ -18,7 +17,7 @@ public interface PostService extends IService<PostEntity> {
 
     void updatePost(SavePostRequest request);
 
-    Page<SimplePostVo> getPostPage(QueryPostPageRequest request);
+    Page<SimplePostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent);
 
     PostVo getPostById(Long id);
 }

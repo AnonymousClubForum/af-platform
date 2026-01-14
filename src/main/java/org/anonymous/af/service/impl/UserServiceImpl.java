@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.request.remote.UploadImageRequest;
 import org.anonymous.af.model.response.LoginResponse;
+import org.anonymous.af.model.response.UserVo;
 import org.anonymous.af.model.response.remote.UploadImageResponse;
 import org.anonymous.af.service.UserService;
 import org.anonymous.af.service.remote.StorageService;
@@ -33,6 +35,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     private StorageService storageService;
     @Resource
     private JwtUtil jwtUtil;
+
+    public Page<UserVo> getPage(Long pageNum, Long pageSize, String username) {
+        Page<UserEntity> page = new Page<>(pageNum, pageSize);
+        Page<UserEntity> userEntityPage = baseMapper.selectPage(page,
+                new LambdaQueryWrapper<UserEntity>().like(UserEntity::getUsername, username));
+        Page<UserVo> userVoPage = new Page<>(userEntityPage.getCurrent(), userEntityPage.getSize(), userEntityPage.getTotal());
+        userVoPage.setRecords(userEntityPage.getRecords().stream().map(entity -> {
+            UserVo userVo = new UserVo();
+            BeanUtil.copyProperties(entity, userVo);
+            return userVo;
+        }).toList());
+        return userVoPage;
+    }
 
     /**
      * 根据用户名获取实体
