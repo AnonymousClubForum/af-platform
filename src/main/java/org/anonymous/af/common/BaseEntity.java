@@ -13,9 +13,9 @@ public class BaseEntity {
 
     @TableField(value = "ctime", fill = FieldFill.INSERT, insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NOT_NULL)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date cTime;
+    private Date ctime;
 
     @TableField(value = "utime", fill = FieldFill.INSERT_UPDATE, insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date uTime;
+    private Date utime;
 }
