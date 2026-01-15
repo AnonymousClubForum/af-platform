@@ -33,7 +33,7 @@ public class TokenInterceptor implements HandlerInterceptor {
             throw new TokenException("请求未负载token");
         } else {
             // 验证并解析JWT Token
-            UserContextUtil.setUserId(Long.parseLong(jwtUtil.parseIdFromToken(token)));
+            UserContextUtil.setUserId(jwtUtil.parseIdFromToken(token));
         }
         return true; // 放行请求
     }
