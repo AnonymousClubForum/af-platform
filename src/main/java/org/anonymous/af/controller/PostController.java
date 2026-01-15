@@ -39,10 +39,10 @@ public class PostController {
     }
 
     @GetMapping("/get_page")
-    public BaseResponse<Page<SimplePostVo>> getPostPage(@RequestParam("page_num") Long pageNum,
-                                                        @RequestParam("page_size") Long pageSize,
-                                                        @RequestParam(value = "user_id", required = false) Long userId,
-                                                        @RequestParam(value = "search_content", required = false) String searchContent) {
+    public BaseResponse<Page<SimplePostVo>> getPostPage(@RequestParam Long pageNum,
+                                                        @RequestParam Long pageSize,
+                                                        @RequestParam(required = false) Long userId,
+                                                        @RequestParam(required = false) String searchContent) {
         return BaseResponse.success(postService.getPostPage(pageNum, pageSize, userId, searchContent));
     }
 }

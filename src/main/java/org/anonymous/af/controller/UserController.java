@@ -34,9 +34,9 @@ public class UserController {
     }
 
     @GetMapping("/get_page")
-    public BaseResponse<Page<UserVo>> getPage(@RequestParam("page_num") Long pageNum,
-                                              @RequestParam("page_size") Long pageSize,
-                                              @RequestParam("username") String username) {
+    public BaseResponse<Page<UserVo>> getPage(@RequestParam Long pageNum,
+                                              @RequestParam Long pageSize,
+                                              @RequestParam String username) {
         return BaseResponse.success(userService.getPage(pageNum, pageSize, username));
     }
 }
