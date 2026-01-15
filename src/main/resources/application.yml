@@ -10,10 +10,6 @@ spring:
     nacos:
       username: nacos
       password: nacos
-      discovery:
-        service: platform
-        group: DEFAULT_GROUP
-        namespace: prd
   datasource:
     username: root
     password: Anonymous1234
