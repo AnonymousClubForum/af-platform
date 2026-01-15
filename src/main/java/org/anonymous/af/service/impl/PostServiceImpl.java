@@ -51,8 +51,10 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
         LambdaQueryWrapper<PostEntity> queryWrapper = new LambdaQueryWrapper<PostEntity>()
                 .eq(userId != null, PostEntity::getUserId, userId);
         if (StrUtil.isNotBlank(searchContent)) {
-            queryWrapper.or(wrapper ->
-                    wrapper.like(PostEntity::getTitle, searchContent).like(PostEntity::getContent, searchContent)
+            queryWrapper.and(wrapper -> wrapper
+                    .like(PostEntity::getTitle, searchContent)
+                    .or()
+                    .like(PostEntity::getContent, searchContent)
             );
         }
         Page<PostEntity> postPage = this.page(page, queryWrapper);
