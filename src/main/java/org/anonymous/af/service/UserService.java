@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 public interface UserService extends IService<UserEntity> {
     Page<UserVo> getPage(Long pageNum, Long pageSize, String username);
 
-    UserEntity getByUsername(String username);
-
     LoginResponse login(String username, String password);
 
     void createUser(SaveUserRequest request);

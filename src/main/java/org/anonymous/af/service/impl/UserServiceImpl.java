@@ -52,7 +52,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     /**
      * 根据用户名获取实体
      */
-    public UserEntity getByUsername(String username) {
+    private UserEntity getByUsername(String username) {
         if (StrUtil.isBlank(username)) {
             throw new IllegalArgumentException("用户名为空");
         }
@@ -77,9 +77,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             throw new AfException("密码错误");
         }
         log.info("用户信息正确，开始构建返回");
+        UserVo userVo = new UserVo();
+        BeanUtil.copyProperties(userEntity, userVo);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(jwtUtil.generateToken(userEntity.getId()));
-        loginResponse.setUser(userEntity);
+        loginResponse.setUser(userVo);
         log.info("返回信息构建完成");
         return loginResponse;
     }

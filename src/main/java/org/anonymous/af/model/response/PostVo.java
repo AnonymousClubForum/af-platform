@@ -22,8 +22,8 @@ public class PostVo {
     private String content;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date cTime;
+    private Date ctime;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date uTime;
+    private Date utime;
 }
