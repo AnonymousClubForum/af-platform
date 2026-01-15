@@ -62,6 +62,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
         postVoPage.setRecords(postPage.getRecords().stream().map((entity) -> {
             SimplePostVo vo = new SimplePostVo();
             BeanUtil.copyProperties(entity, vo, true);
+            UserEntity userEntity = userService.getById(entity.getUserId());
+            vo.setUsername(userEntity != null ? userEntity.getUsername() : "用户已注销");
             return vo;
         }).toList());
         return postVoPage;
