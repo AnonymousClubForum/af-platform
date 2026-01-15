@@ -48,11 +48,12 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
      */
     public Page<SimplePostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent) {
         Page<PostEntity> page = new Page<>(pageNum, pageSize);
-        LambdaQueryWrapper<PostEntity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(userId != null, PostEntity::getUserId, userId);
+        LambdaQueryWrapper<PostEntity> queryWrapper = new LambdaQueryWrapper<PostEntity>()
+                .eq(userId != null, PostEntity::getUserId, userId);
         if (StrUtil.isNotBlank(searchContent)) {
-            queryWrapper.like(PostEntity::getTitle, searchContent);
-            queryWrapper.like(PostEntity::getContent, searchContent);
+            queryWrapper.or(wrapper ->
+                    wrapper.like(PostEntity::getTitle, searchContent).like(PostEntity::getContent, searchContent)
+            );
         }
         Page<PostEntity> postPage = this.page(page, queryWrapper);
         Page<SimplePostVo> postVoPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
