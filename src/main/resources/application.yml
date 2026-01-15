@@ -26,5 +26,10 @@ spring:
     encoding: UTF-8  # 脚本编码
     baseline-version: 0  # 基线版本
 
+jwt:
+  secret:
+    af-256-bit-secret-key-anonymous-forum # 签名密钥
+  expire-time:
+    43200 # 过期时间（单位：秒）：12小时
 server:
   port: 8080

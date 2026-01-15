@@ -19,14 +19,16 @@ import java.util.UUID;
 @Slf4j
 public class JwtUtil {
     // 签名密钥
-    @Value("${jwt.secret:af-256-bit-secret-key-anonymous-forum}")
+    @Value("${jwt.secret}")
     private String secret;
 
-    // Token过期时间（12小时，单位：秒）
-    @Value("${jwt.expire-time:43200}")
+    // Token过期时间（单位：秒）
+    @Value("${jwt.expire-time}")
     private Long expireTime;
 
-    private final SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes());
+    }
 
     private Map<String, Object> generateClaims(Long userId) {
         // 过期时间 = 当前时间 + 过期时长
@@ -52,7 +54,7 @@ public class JwtUtil {
         // 生成Token
         return Jwts.builder()
                 .claims(generateClaims(userId))  // 设置载荷
-                .signWith(secretKey) // 密钥
+                .signWith(getSecretKey()) // 密钥
                 .compact(); // 生成最终Token
     }
 
@@ -67,7 +69,7 @@ public class JwtUtil {
             // 解析Token并验证签名、过期时间
             log.info("parseIdFromToken: {}", token);
             return Jwts.parser()
-                    .verifyWith(secretKey) // 设置验证密钥
+                    .verifyWith(getSecretKey()) // 设置验证密钥
                     .build()
                     .parseEncryptedClaims(token) // 解析Token
                     .getPayload()
