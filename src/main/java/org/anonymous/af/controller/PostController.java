@@ -16,13 +16,13 @@ public class PostController {
     private PostServiceImpl postService;
 
     @PostMapping("/save")
-    public BaseResponse<Long> createPost(@RequestBody SavePostRequest request) {
-        return BaseResponse.success(postService.createPost(request));
+    public BaseResponse<String> createPost(@RequestBody SavePostRequest request) {
+        return BaseResponse.success(postService.createPost(request).toString());
     }
 
     @PostMapping("/update")
-    public BaseResponse<Long> updatePost(@RequestBody SavePostRequest request) {
-        return BaseResponse.success(postService.updatePost(request));
+    public BaseResponse<String> updatePost(@RequestBody SavePostRequest request) {
+        return BaseResponse.success(postService.updatePost(request).toString());
     }
 
     @DeleteMapping("/delete")

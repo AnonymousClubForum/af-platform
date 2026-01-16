@@ -65,6 +65,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
             SimplePostVo vo = new SimplePostVo();
             BeanUtil.copyProperties(entity, vo, true);
             UserEntity userEntity = userService.getById(entity.getUserId());
+            vo.setUserId(userEntity != null ? userEntity.getId() : -1);
             vo.setUsername(userEntity != null ? userEntity.getUsername() : "用户已注销");
             return vo;
         }).toList());
@@ -79,7 +80,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
         PostVo postVo = new PostVo();
         BeanUtil.copyProperties(postEntity, postVo, true);
         UserEntity userEntity = userService.getById(postEntity.getUserId());
-        postVo.setUserName(userEntity.getUsername());
+        postVo.setUserId(userEntity != null ? userEntity.getId() : -1);
+        postVo.setUsername(userEntity != null ? userEntity.getUsername() : "用户已注销");
         return postVo;
     }
 }

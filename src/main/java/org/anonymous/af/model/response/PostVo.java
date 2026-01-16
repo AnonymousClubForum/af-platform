@@ -15,7 +15,7 @@ public class PostVo {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
-    private String userName;
+    private String username;
 
     private String title;
 
