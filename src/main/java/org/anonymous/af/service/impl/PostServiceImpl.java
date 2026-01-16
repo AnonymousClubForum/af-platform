@@ -41,7 +41,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
     public Long updatePost(SavePostRequest request) {
         PostEntity postEntity = this.getById(request.getId());
         BeanUtil.copyProperties(request, postEntity, true);
-        this.save(postEntity);
+        this.updateById(postEntity);
         return postEntity.getId();
     }
 
