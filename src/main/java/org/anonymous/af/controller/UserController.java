@@ -1,6 +1,6 @@
 package org.anonymous.af.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.model.request.LoginRequest;
 import org.anonymous.af.model.request.SaveUserRequest;
@@ -34,9 +34,9 @@ public class UserController {
     }
 
     @GetMapping("/get_page")
-    public BaseResponse<Page<UserVo>> getPage(@RequestParam Long pageNum,
-                                              @RequestParam Long pageSize,
-                                              @RequestParam String username) {
+    public BaseResponse<IPage<UserVo>> getPage(@RequestParam Long pageNum,
+                                               @RequestParam Long pageSize,
+                                               @RequestParam String username) {
         return BaseResponse.success(userService.getPage(pageNum, pageSize, username));
     }
 }

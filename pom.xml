@@ -24,6 +24,17 @@
         <jjwt.version>0.12.3</jjwt.version>
         <maven.compiler.version>3.14.1</maven.compiler.version>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-bom</artifactId>
+                <version>${mybatisplus.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <!-- Spring Web -->
         <dependency>
@@ -75,6 +86,11 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
             <version>${mybatisplus.version}</version>
+        </dependency>
+        <!-- MyBatis Plus 分页插件 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser</artifactId>
         </dependency>
         <!-- jwt -->
         <dependency>

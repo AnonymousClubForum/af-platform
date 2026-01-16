@@ -3,6 +3,7 @@ package org.anonymous.af.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -48,7 +49,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
     /**
      * 分页查询帖子
      */
-    public Page<SimplePostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent) {
+    public IPage<SimplePostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent) {
         Page<PostEntity> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<PostEntity> queryWrapper = new LambdaQueryWrapper<PostEntity>()
                 .eq(userId != null, PostEntity::getUserId, userId);
@@ -59,17 +60,14 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
                     .like(PostEntity::getContent, searchContent)
             );
         }
-        Page<PostEntity> postPage = this.page(page, queryWrapper);
-        Page<SimplePostVo> postVoPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
-        postVoPage.setRecords(postPage.getRecords().stream().map((entity) -> {
+        return this.page(page, queryWrapper).convert(entity -> {
             SimplePostVo vo = new SimplePostVo();
             BeanUtil.copyProperties(entity, vo, true);
             UserEntity userEntity = userService.getById(entity.getUserId());
             vo.setUserId(userEntity != null ? userEntity.getId() : -1);
             vo.setUsername(userEntity != null ? userEntity.getUsername() : "用户已注销");
             return vo;
-        }).toList());
-        return postVoPage;
+        });
     }
 
     /**

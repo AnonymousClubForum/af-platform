@@ -1,6 +1,6 @@
 package org.anonymous.af.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SaveUserRequest;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface UserService extends IService<UserEntity> {
-    Page<UserVo> getPage(Long pageNum, Long pageSize, String username);
+    IPage<UserVo> getPage(Long pageNum, Long pageSize, String username);
 
     LoginResponse login(String username, String password);
 

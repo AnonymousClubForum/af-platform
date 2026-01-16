@@ -1,9 +1,9 @@
 package org.anonymous.af.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -26,7 +26,6 @@ import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -36,17 +35,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Resource
     private JwtUtil jwtUtil;
 
-    public Page<UserVo> getPage(Long pageNum, Long pageSize, String username) {
-        Page<UserEntity> page = new Page<>(pageNum, pageSize);
-        Page<UserEntity> userEntityPage = baseMapper.selectPage(page,
-                new LambdaQueryWrapper<UserEntity>().like(UserEntity::getUsername, username));
-        Page<UserVo> userVoPage = new Page<>(userEntityPage.getCurrent(), userEntityPage.getSize(), userEntityPage.getTotal());
-        userVoPage.setRecords(userEntityPage.getRecords().stream().map(entity -> {
-            UserVo userVo = new UserVo();
-            BeanUtil.copyProperties(entity, userVo);
-            return userVo;
-        }).toList());
-        return userVoPage;
+    public IPage<UserVo> getPage(Long pageNum, Long pageSize, String username) {
+        return baseMapper.selectPage(new Page<>(pageNum, pageSize),
+                        new LambdaQueryWrapper<UserEntity>().like(UserEntity::getUsername, username))
+                .convert(entity -> {
+                    UserVo userVo = new UserVo();
+                    BeanUtil.copyProperties(entity, userVo);
+                    return userVo;
+                });
     }
 
     /**
@@ -58,11 +54,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
         LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserEntity::getUsername, username);
-        List<UserEntity> userEntityList = baseMapper.selectList(queryWrapper);
-        if (CollUtil.isEmpty(userEntityList)) {
-            return null;
-        }
-        return userEntityList.getFirst();
+        queryWrapper.last("limit 1");
+        return baseMapper.selectOne(queryWrapper);
     }
 
     /**
@@ -101,6 +94,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         userEntity.setId(IdWorker.getId());
         // 加密密码（仅存储哈希值，不存储明文）
         userEntity.setPassword(PasswordEncoderUtil.encode(request.getPassword()));
+        if (StrUtil.isBlank(request.getGender())) {
+            userEntity.setGender(GenderEnum.SECRET.getGender());
+        }
         if (request.getAvatar() != null) {
             UploadImageRequest uploadImageRequest = new UploadImageRequest();
             uploadImageRequest.setFile(request.getAvatar());
@@ -119,14 +115,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      */
     public void updateUser(SaveUserRequest request) {
         UserEntity userEntity = getById(UserContextUtil.getUserId());
-        BeanUtil.copyProperties(request, userEntity, true);
         if (StrUtil.isNotBlank(request.getPassword())) {
             userEntity.setPassword(PasswordEncoderUtil.encode(request.getPassword()));
         }
-        if (StrUtil.isNotBlank(request.getGender()) && Arrays.stream(GenderEnum.values()).noneMatch(gender -> request.getGender().equals(gender.getGender()))) {
-            throw new IllegalArgumentException("性别类型不可用");
+        if (StrUtil.isNotBlank(request.getGender())) {
+            if (Arrays.stream(GenderEnum.values()).noneMatch(gender -> request.getGender().equals(gender.getGender()))) {
+                throw new IllegalArgumentException("性别类型不可用");
+            }
+            userEntity.setGender(request.getGender());
         }
         if (request.getAvatar() != null) {
+            if (request.getAvatarWidth() == null || request.getAvatarHeight() == null) {
+                throw new IllegalArgumentException("缺少头像大小参数!");
+            }
             UploadImageRequest uploadImageRequest = new UploadImageRequest();
             uploadImageRequest.setFile(request.getAvatar());
             uploadImageRequest.setHeight(request.getAvatarHeight());
