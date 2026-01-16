@@ -27,23 +27,21 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
     /**
      * 新增帖子
      */
-    public Long createPost(SavePostRequest request) {
+    public void createPost(SavePostRequest request) {
         PostEntity postEntity = new PostEntity();
         BeanUtil.copyProperties(request, postEntity, true);
         postEntity.setId(IdWorker.getId());
         postEntity.setUserId(UserContextUtil.getUserId());
         this.save(postEntity);
-        return postEntity.getId();
     }
 
     /**
      * 更新帖子
      */
-    public Long updatePost(SavePostRequest request) {
+    public void updatePost(SavePostRequest request) {
         PostEntity postEntity = this.getById(request.getId());
         BeanUtil.copyProperties(request, postEntity, true);
         this.updateById(postEntity);
-        return postEntity.getId();
     }
 
     /**

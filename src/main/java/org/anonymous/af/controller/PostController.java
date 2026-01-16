@@ -5,7 +5,7 @@ import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.model.request.SavePostRequest;
 import org.anonymous.af.model.response.PostVo;
 import org.anonymous.af.model.response.SimplePostVo;
-import org.anonymous.af.service.impl.PostServiceImpl;
+import org.anonymous.af.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,22 +13,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/post")
 public class PostController {
     @Autowired
-    private PostServiceImpl postService;
+    private PostService postService;
 
     @PostMapping("/save")
     public BaseResponse<String> createPost(@RequestBody SavePostRequest request) {
-        return BaseResponse.success(postService.createPost(request).toString());
+        postService.createPost(request);
+        return BaseResponse.success("发布成功");
     }
 
     @PostMapping("/update")
     public BaseResponse<String> updatePost(@RequestBody SavePostRequest request) {
-        return BaseResponse.success(postService.updatePost(request).toString());
+        postService.updatePost(request);
+        return BaseResponse.success("编辑成功");
     }
 
     @DeleteMapping("/delete")
     public BaseResponse<String> deletePost(@RequestParam Long id) {
         postService.removeById(id);
-        return BaseResponse.success("发布成功");
+        return BaseResponse.success("删除成功");
     }
 
     @GetMapping("/get")
