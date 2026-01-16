@@ -58,6 +58,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
                     .like(PostEntity::getContent, searchContent)
             );
         }
+        queryWrapper.orderByDesc(PostEntity::getUtime);
         return this.page(page, queryWrapper).convert(entity -> {
             SimplePostVo vo = new SimplePostVo();
             BeanUtil.copyProperties(entity, vo, true);

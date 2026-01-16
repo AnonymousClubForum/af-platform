@@ -37,7 +37,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     public IPage<UserVo> getPage(Long pageNum, Long pageSize, String username) {
         return baseMapper.selectPage(new Page<>(pageNum, pageSize),
-                        new LambdaQueryWrapper<UserEntity>().like(UserEntity::getUsername, username))
+                        new LambdaQueryWrapper<UserEntity>().like(UserEntity::getUsername, username)
+                                .orderByDesc(UserEntity::getUtime)
+                )
                 .convert(entity -> {
                     UserVo userVo = new UserVo();
                     BeanUtil.copyProperties(entity, userVo);
