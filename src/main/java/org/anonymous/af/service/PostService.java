@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface PostService extends IService<PostEntity> {
-    void createPost(SavePostRequest request);
+    Long createPost(SavePostRequest request);
 
-    void updatePost(SavePostRequest request);
+    Long updatePost(SavePostRequest request);
 
     Page<SimplePostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent);
 
