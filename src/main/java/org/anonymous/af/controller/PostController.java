@@ -29,7 +29,7 @@ public class PostController {
 
     @DeleteMapping("/delete")
     public BaseResponse<String> deletePost(@RequestParam Long id) {
-        postService.removeById(id);
+        postService.deletePost(id);
         return BaseResponse.success("删除成功");
     }
 

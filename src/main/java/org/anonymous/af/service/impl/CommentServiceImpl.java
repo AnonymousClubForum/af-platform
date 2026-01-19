@@ -30,7 +30,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
         BeanUtil.copyProperties(request, commentEntity, true);
         commentEntity.setId(IdWorker.getId());
         commentEntity.setUserId(UserContextUtil.getUserId());
-        this.save(commentEntity);
+        baseMapper.insert(commentEntity);
     }
 
     /**
@@ -39,6 +39,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
     public void deleteComment(Long id) {
         baseMapper.deleteById(id);
         baseMapper.delete(new LambdaQueryWrapper<CommentEntity>().eq(CommentEntity::getParentId, id));
+    }
+
+    /**
+     * 删除评论
+     */
+    public void deleteCommentByPost(Long postId) {
+        baseMapper.delete(new LambdaQueryWrapper<CommentEntity>().eq(CommentEntity::getPostId, postId));
     }
 
     /**
@@ -51,7 +58,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
                 .eq(parentId != null, CommentEntity::getParentId, parentId)
                 .isNull(parentId == null, CommentEntity::getParentId)
                 .orderByAsc(CommentEntity::getCtime);
-        return this.page(page, queryWrapper).convert(entity -> {
+        return baseMapper.selectPage(page, queryWrapper).convert(entity -> {
             CommentVo vo = new CommentVo();
             BeanUtil.copyProperties(entity, vo, true);
             UserEntity userEntity = userService.getById(entity.getUserId());

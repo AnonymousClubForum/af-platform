@@ -109,7 +109,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             userEntity.setAvatarThumbNailId(uploadImageResponse.getThumbnailId());
         }
 
-        this.save(userEntity);
+        baseMapper.insert(userEntity);
     }
 
     /**
@@ -138,6 +138,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             userEntity.setAvatarId(uploadImageResponse.getImageId());
             userEntity.setAvatarThumbNailId(uploadImageResponse.getThumbnailId());
         }
-        this.updateById(userEntity);
+        baseMapper.updateById(userEntity);
     }
 }

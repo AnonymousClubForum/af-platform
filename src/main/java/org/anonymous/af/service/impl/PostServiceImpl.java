@@ -14,6 +14,7 @@ import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SavePostRequest;
 import org.anonymous.af.model.response.PostVo;
 import org.anonymous.af.model.response.SimplePostVo;
+import org.anonymous.af.service.CommentService;
 import org.anonymous.af.service.PostService;
 import org.anonymous.af.service.UserService;
 import org.anonymous.af.utils.UserContextUtil;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Service;
 public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> implements PostService {
     @Resource
     private UserService userService;
+    @Resource
+    private CommentService commentService;
 
     /**
      * 新增帖子
@@ -32,16 +35,24 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
         BeanUtil.copyProperties(request, postEntity, true);
         postEntity.setId(IdWorker.getId());
         postEntity.setUserId(UserContextUtil.getUserId());
-        this.save(postEntity);
+        baseMapper.insert(postEntity);
     }
 
     /**
      * 更新帖子
      */
     public void updatePost(SavePostRequest request) {
-        PostEntity postEntity = this.getById(request.getId());
+        PostEntity postEntity = baseMapper.selectById(request.getId());
         BeanUtil.copyProperties(request, postEntity, true);
-        this.updateById(postEntity);
+        baseMapper.updateById(postEntity);
+    }
+
+    /**
+     * 删除帖子
+     */
+    public void deletePost(Long id) {
+        baseMapper.deleteById(id);
+        commentService.deleteCommentByPost(id);
     }
 
     /**
@@ -59,7 +70,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
             );
         }
         queryWrapper.orderByDesc(PostEntity::getUtime);
-        return this.page(page, queryWrapper).convert(entity -> {
+        return baseMapper.selectPage(page, queryWrapper).convert(entity -> {
             SimplePostVo vo = new SimplePostVo();
             BeanUtil.copyProperties(entity, vo, true);
             UserEntity userEntity = userService.getById(entity.getUserId());
@@ -72,7 +83,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
      * 查询帖子详情
      */
     public PostVo getPostById(Long id) {
-        PostEntity postEntity = this.getById(id);
+        PostEntity postEntity = baseMapper.selectById(id);
         PostVo postVo = new PostVo();
         BeanUtil.copyProperties(postEntity, postVo, true);
         UserEntity userEntity = userService.getById(postEntity.getUserId());
