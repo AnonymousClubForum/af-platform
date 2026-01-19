@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `af_platform`.`t_user`
+CREATE TABLE IF NOT EXISTS `af_platform`.`t_comment`
 (
     `id`        BIGINT NOT NULL,
     `post_id`   BIGINT    DEFAULT NULL COMMENT '被评论的帖子ID',

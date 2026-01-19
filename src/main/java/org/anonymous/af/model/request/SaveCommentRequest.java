@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class SaveCommentRequest {
-    private Long id;
     private Long postId;
     private Long parentId;
     private String content;
