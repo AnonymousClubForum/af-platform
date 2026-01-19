@@ -22,7 +22,7 @@ public class CommentController {
 
     @DeleteMapping("/delete")
     public BaseResponse<String> deleteComment(@RequestParam Long id) {
-        commentService.removeById(id);
+        commentService.deleteComment(id);
         return BaseResponse.success("删除成功");
     }
 
