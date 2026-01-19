@@ -7,6 +7,7 @@ import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.response.LoginResponse;
 import org.anonymous.af.model.response.UserVo;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 用户服务接口
@@ -20,4 +21,6 @@ public interface UserService extends IService<UserEntity> {
     void createUser(SaveUserRequest request);
 
     void updateUser(SaveUserRequest request);
+
+    void uploadAvatar(MultipartFile file);
 }

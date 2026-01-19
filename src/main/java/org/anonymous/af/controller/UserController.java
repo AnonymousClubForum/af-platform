@@ -9,6 +9,7 @@ import org.anonymous.af.model.response.UserVo;
 import org.anonymous.af.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -38,5 +39,11 @@ public class UserController {
                                                @RequestParam Long pageSize,
                                                @RequestParam String username) {
         return BaseResponse.success(userService.getPage(pageNum, pageSize, username));
+    }
+
+    @PostMapping("/avatar/upload")
+    public BaseResponse<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
+        userService.uploadAvatar(file);
+        return BaseResponse.success("上传成功");
     }
 }

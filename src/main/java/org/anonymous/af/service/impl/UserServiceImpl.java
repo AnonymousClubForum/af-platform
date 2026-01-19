@@ -14,16 +14,15 @@ import org.anonymous.af.exception.AfException;
 import org.anonymous.af.mapper.UserMapper;
 import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SaveUserRequest;
-import org.anonymous.af.model.request.remote.UploadImageRequest;
 import org.anonymous.af.model.response.LoginResponse;
 import org.anonymous.af.model.response.UserVo;
-import org.anonymous.af.model.response.remote.UploadImageResponse;
 import org.anonymous.af.service.UserService;
 import org.anonymous.af.service.remote.StorageService;
 import org.anonymous.af.utils.JwtUtil;
 import org.anonymous.af.utils.PasswordEncoderUtil;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 
@@ -99,16 +98,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if (StrUtil.isBlank(request.getGender())) {
             userEntity.setGender(GenderEnum.SECRET.getGender());
         }
-        if (request.getAvatar() != null) {
-            UploadImageRequest uploadImageRequest = new UploadImageRequest();
-            uploadImageRequest.setFile(request.getAvatar());
-            uploadImageRequest.setHeight(request.getAvatarHeight());
-            uploadImageRequest.setWidth(request.getAvatarWidth());
-            UploadImageResponse uploadImageResponse = storageService.uploadImage(uploadImageRequest);
-            userEntity.setAvatarId(uploadImageResponse.getImageId());
-            userEntity.setAvatarThumbNailId(uploadImageResponse.getThumbnailId());
-        }
-
         baseMapper.insert(userEntity);
     }
 
@@ -126,18 +115,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             }
             userEntity.setGender(request.getGender());
         }
-        if (request.getAvatar() != null) {
-            if (request.getAvatarWidth() == null || request.getAvatarHeight() == null) {
-                throw new IllegalArgumentException("缺少头像大小参数!");
-            }
-            UploadImageRequest uploadImageRequest = new UploadImageRequest();
-            uploadImageRequest.setFile(request.getAvatar());
-            uploadImageRequest.setHeight(request.getAvatarHeight());
-            uploadImageRequest.setWidth(request.getAvatarWidth());
-            UploadImageResponse uploadImageResponse = storageService.uploadImage(uploadImageRequest);
-            userEntity.setAvatarId(uploadImageResponse.getImageId());
-            userEntity.setAvatarThumbNailId(uploadImageResponse.getThumbnailId());
-        }
+        baseMapper.updateById(userEntity);
+    }
+
+    /**
+     * 上传用户头像
+     */
+    public void uploadAvatar(MultipartFile file) {
+        Long avatarId = storageService.uploadImage(file);
+        UserEntity userEntity = getById(UserContextUtil.getUserId());
+        userEntity.setAvatarId(avatarId);
         baseMapper.updateById(userEntity);
     }
 }
