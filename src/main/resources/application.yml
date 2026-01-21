@@ -27,5 +27,12 @@ jwt:
     af-256-bit-secret-key-anonymous-forum # 签名密钥
   expire-time:
     43200 # 过期时间（单位：秒）：12小时
+
+org:
+  anonymous:
+    storage-config:
+      download-file: /file/download
+      upload-file: /file/upload
+
 server:
   port: 8080

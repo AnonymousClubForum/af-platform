@@ -13,7 +13,6 @@ public class AfProperties {
     @Data
     public static class StorageConfig {
         private String uploadFile = "/file/upload/file";
-        private String uploadImage = "/file/upload/image";
         private String downloadFile = "/file/download";
     }
 }

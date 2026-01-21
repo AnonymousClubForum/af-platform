@@ -40,7 +40,7 @@ public class StorageService {
             MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
             formData.add("file", file.getResource());
             ResponseEntity<BaseResponse<Long>> response = restTemplate.exchange(
-                    URI.create(instance.getUri() + afProperties.getStorageConfig().getUploadImage()),
+                    URI.create(instance.getUri() + afProperties.getStorageConfig().getUploadFile()),
                     HttpMethod.POST,
                     new HttpEntity<>(formData),
                     new ParameterizedTypeReference<>() {
