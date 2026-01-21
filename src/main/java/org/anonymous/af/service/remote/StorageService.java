@@ -2,6 +2,7 @@ package org.anonymous.af.service.remote;
 
 import cn.hutool.core.util.RandomUtil;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.config.AfProperties;
 import org.anonymous.af.exception.ThirdPartyException;
@@ -22,6 +23,7 @@ import java.net.URI;
 import java.util.List;
 
 @Service
+@Slf4j
 public class StorageService {
     @Resource
     private AfProperties afProperties;
@@ -31,9 +33,10 @@ public class StorageService {
     private RestTemplate restTemplate;
 
     /**
-     * 上传图片
+     * 上传文件
      */
-    public Long uploadImage(MultipartFile file) {
+    public Long uploadFile(MultipartFile file) {
+        log.info("UploadFile {}", file.getOriginalFilename());
         try {
             List<ServiceInstance> instances = discoveryClient.getInstances("af-storage");
             ServiceInstance instance = instances.get(RandomUtil.randomInt(instances.size()));
@@ -46,6 +49,7 @@ public class StorageService {
                     new ParameterizedTypeReference<>() {
                     }
             );
+            log.info("uploadFile response: {}", response);
             if (!response.getStatusCode().equals(HttpStatus.OK) || response.getBody() == null) {
                 throw new ThirdPartyException("请求错误");
             }
