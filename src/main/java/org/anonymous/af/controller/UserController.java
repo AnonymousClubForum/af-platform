@@ -43,7 +43,6 @@ public class UserController {
 
     @PostMapping("/avatar/upload")
     public BaseResponse<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
-        userService.uploadAvatar(file);
-        return BaseResponse.success("上传成功");
+        return BaseResponse.success(userService.uploadAvatar(file));
     }
 }

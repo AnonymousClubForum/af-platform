@@ -121,10 +121,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     /**
      * 上传用户头像
      */
-    public void uploadAvatar(MultipartFile file) {
+    public String uploadAvatar(MultipartFile file) {
         Long avatarId = storageService.uploadImage(file);
         UserEntity userEntity = getById(UserContextUtil.getUserId());
         userEntity.setAvatarId(avatarId);
         baseMapper.updateById(userEntity);
+        return avatarId.toString();
     }
 }
