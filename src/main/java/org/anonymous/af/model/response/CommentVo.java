@@ -17,6 +17,8 @@ public class CommentVo {
 
     private String username;
 
+    private String avatarId;
+
     private String content;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

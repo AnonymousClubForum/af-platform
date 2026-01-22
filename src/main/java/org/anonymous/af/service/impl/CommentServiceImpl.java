@@ -62,7 +62,14 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
             CommentVo vo = new CommentVo();
             BeanUtil.copyProperties(entity, vo, true);
             UserEntity userEntity = userService.getById(entity.getUserId());
-            vo.setUsername(userEntity != null ? userEntity.getUsername() : "用户已注销");
+            if (userEntity != null) {
+                vo.setUsername(userEntity.getUsername());
+                if (userEntity.getAvatarId() != null) {
+                    vo.setAvatarId(userEntity.getAvatarId().toString());
+                }
+            } else {
+                vo.setUsername("用户已注销");
+            }
             return vo;
         });
     }
