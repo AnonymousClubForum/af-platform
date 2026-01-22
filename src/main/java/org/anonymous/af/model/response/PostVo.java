@@ -17,6 +17,8 @@ public class PostVo {
 
     private String username;
 
+    private String avatarId;
+
     private String title;
 
     private String content;

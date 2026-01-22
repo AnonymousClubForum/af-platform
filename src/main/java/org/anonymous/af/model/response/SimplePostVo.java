@@ -17,6 +17,8 @@ public class SimplePostVo {
 
     private String username;
 
+    private String avatarId;
+
     private String title;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
