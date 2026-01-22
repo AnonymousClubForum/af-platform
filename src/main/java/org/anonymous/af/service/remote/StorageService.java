@@ -41,7 +41,7 @@ public class StorageService {
         ServiceInstance instance = instances.get(RandomUtil.randomInt(instances.size()));
         MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
         formData.add("file", file.getResource());
-        ResponseEntity<BaseResponse<Long>> response = restTemplate.exchange(
+        ResponseEntity<BaseResponse<String>> response = restTemplate.exchange(
                 URI.create(instance.getUri() + afProperties.getStorageConfig().getUploadFile()),
                 HttpMethod.POST,
                 new HttpEntity<>(formData),
@@ -52,10 +52,10 @@ public class StorageService {
         if (!response.getStatusCode().equals(HttpStatus.OK) || response.getBody() == null) {
             throw new ThirdPartyException("请求错误");
         }
-        Long fileId = response.getBody().getData();
+        String fileId = response.getBody().getData();
         if (fileId == null) {
             throw new ThirdPartyException("请求返回为空");
         }
-        return fileId;
+        return Long.valueOf(fileId);
     }
 }
