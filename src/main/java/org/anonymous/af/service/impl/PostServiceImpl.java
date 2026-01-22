@@ -76,7 +76,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
             UserEntity userEntity = userService.getById(entity.getUserId());
             if (userEntity != null) {
                 vo.setUsername(userEntity.getUsername());
-                vo.setAvatarId(String.valueOf(userEntity.getAvatarId()));
+                if (userEntity.getAvatarId() != null) {
+                    vo.setAvatarId(userEntity.getAvatarId().toString());
+                }
             } else {
                 vo.setUsername("用户已注销");
             }
@@ -94,7 +96,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
         UserEntity userEntity = userService.getById(postEntity.getUserId());
         if (userEntity != null) {
             vo.setUsername(userEntity.getUsername());
-            vo.setAvatarId(String.valueOf(userEntity.getAvatarId()));
+            if (userEntity.getAvatarId() != null) {
+                vo.setAvatarId(userEntity.getAvatarId().toString());
+            }
         } else {
             vo.setUsername("用户已注销");
         }

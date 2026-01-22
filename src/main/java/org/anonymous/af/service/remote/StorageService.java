@@ -37,25 +37,25 @@ public class StorageService {
      */
     public Long uploadFile(MultipartFile file) {
         log.info("UploadFile {}", file.getOriginalFilename());
-        try {
-            List<ServiceInstance> instances = discoveryClient.getInstances("af-storage");
-            ServiceInstance instance = instances.get(RandomUtil.randomInt(instances.size()));
-            MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
-            formData.add("file", file.getResource());
-            ResponseEntity<BaseResponse<Long>> response = restTemplate.exchange(
-                    URI.create(instance.getUri() + afProperties.getStorageConfig().getUploadFile()),
-                    HttpMethod.POST,
-                    new HttpEntity<>(formData),
-                    new ParameterizedTypeReference<>() {
-                    }
-            );
-            log.info("uploadFile response: {}", response);
-            if (!response.getStatusCode().equals(HttpStatus.OK) || response.getBody() == null) {
-                throw new ThirdPartyException("请求错误");
-            }
-            return response.getBody().getData();
-        } catch (Exception e) {
-            throw new ThirdPartyException(e.getMessage());
+        List<ServiceInstance> instances = discoveryClient.getInstances("af-storage");
+        ServiceInstance instance = instances.get(RandomUtil.randomInt(instances.size()));
+        MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
+        formData.add("file", file.getResource());
+        ResponseEntity<BaseResponse<Long>> response = restTemplate.exchange(
+                URI.create(instance.getUri() + afProperties.getStorageConfig().getUploadFile()),
+                HttpMethod.POST,
+                new HttpEntity<>(formData),
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        log.info("uploadFile response: {}", response);
+        if (!response.getStatusCode().equals(HttpStatus.OK) || response.getBody() == null) {
+            throw new ThirdPartyException("请求错误");
         }
+        Long fileId = response.getBody().getData();
+        if (fileId == null) {
+            throw new ThirdPartyException("请求返回为空");
+        }
+        return fileId;
     }
 }
