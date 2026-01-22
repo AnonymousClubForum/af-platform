@@ -15,15 +15,15 @@ public class BaseResponse<T> {
     /**
      * 响应信息
      */
-    private String message;
+    private String msg;
     /**
      * 响应数据
      */
     private T data;
 
-    private BaseResponse(Integer code, String message, T data) {
+    private BaseResponse(Integer code, String msg, T data) {
         this.code = code;
-        this.message = message;
+        this.msg = msg;
         this.data = data;
     }
 
@@ -33,12 +33,12 @@ public class BaseResponse<T> {
     }
 
     // 失败响应
-    public static <T> BaseResponse<T> error(String message) {
-        return new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, null);
+    public static <T> BaseResponse<T> error(String msg) {
+        return new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), msg, null);
     }
 
     // 请求错误响应
-    public static <T> BaseResponse<T> badRequest(String message) {
-        return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), message, null);
+    public static <T> BaseResponse<T> badRequest(String msg) {
+        return new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), msg, null);
     }
 }
