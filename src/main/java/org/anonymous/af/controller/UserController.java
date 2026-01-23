@@ -35,8 +35,8 @@ public class UserController {
     }
 
     @GetMapping("/get")
-    public BaseResponse<UserVo> getUser() {
-        return BaseResponse.success(userService.getUser());
+    public BaseResponse<UserVo> getUser(@RequestParam(required = false) Long userId) {
+        return BaseResponse.success(userService.getUser(userId));
     }
 
     @GetMapping("/get_page")

@@ -121,8 +121,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     /**
      * 获取当前用户
      */
-    public UserVo getUser() {
-        UserEntity userEntity = getById(UserContextUtil.getUserId());
+    public UserVo getUser(Long id) {
+        if (id == null) {
+            id = UserContextUtil.getUserId();
+        }
+        UserEntity userEntity = getById(id);
         UserVo userVo = new UserVo();
         BeanUtil.copyProperties(userEntity, userVo);
         return userVo;
