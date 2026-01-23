@@ -22,5 +22,7 @@ public interface UserService extends IService<UserEntity> {
 
     void updateUser(SaveUserRequest request);
 
+    UserVo getUser();
+
     String uploadAvatar(MultipartFile file);
 }

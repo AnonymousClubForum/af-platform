@@ -15,7 +15,4 @@ public class UserVo {
 
     @JsonSerialize(using = ToStringSerializer.class)
     private Long avatarId;
-
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long avatarThumbNailId;
 }

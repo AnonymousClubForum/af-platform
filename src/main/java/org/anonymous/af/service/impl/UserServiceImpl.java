@@ -119,6 +119,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 
     /**
+     * 获取当前用户
+     */
+    public UserVo getUser() {
+        UserEntity userEntity = getById(UserContextUtil.getUserId());
+        UserVo userVo = new UserVo();
+        BeanUtil.copyProperties(userEntity, userVo);
+        return userVo;
+    }
+
+    /**
      * 上传用户头像
      */
     public String uploadAvatar(MultipartFile file) {

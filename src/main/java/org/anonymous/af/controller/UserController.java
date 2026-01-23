@@ -34,6 +34,11 @@ public class UserController {
         return BaseResponse.success("用户信息更新成功");
     }
 
+    @GetMapping("/get")
+    public BaseResponse<UserVo> getUser() {
+        return BaseResponse.success(userService.getUser());
+    }
+
     @GetMapping("/get_page")
     public BaseResponse<IPage<UserVo>> getPage(@RequestParam Long pageNum,
                                                @RequestParam Long pageSize,
