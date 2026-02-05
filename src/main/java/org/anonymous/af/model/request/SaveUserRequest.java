@@ -7,4 +7,5 @@ public class SaveUserRequest {
     private String username;
     private String password;
     private String gender;
+    private String bio;
 }

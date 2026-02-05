@@ -115,6 +115,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             }
             userEntity.setGender(request.getGender());
         }
+        if (StrUtil.isNotBlank(request.getBio())) {
+            userEntity.setBio(request.getBio());
+        }
         baseMapper.updateById(userEntity);
     }
 

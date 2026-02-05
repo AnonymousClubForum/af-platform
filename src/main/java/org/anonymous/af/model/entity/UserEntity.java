@@ -19,5 +19,5 @@ public class UserEntity extends BaseEntity {
 
     private Long avatarId;
 
-    private Long avatarThumbNailId;
+    private String bio;
 }
