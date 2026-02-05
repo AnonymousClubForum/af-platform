@@ -17,7 +17,7 @@ SET @exist = (SELECT COUNT(*)
                 AND TABLE_NAME = 't_user'
                 AND COLUMN_NAME = 'bio');
 SET @query = IF(@exist > 0, 'SELECT ''Column bio exists''',
-                'ALTER TABLE t_exam_result ADD COLUMN bio VARCHAR(255) NULL DEFAULT NULL COMMENT ''个人签名''');
+                'ALTER TABLE t_user ADD COLUMN bio VARCHAR(255) NULL DEFAULT NULL COMMENT ''个人签名''');
 PREPARE stmt FROM @query;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
