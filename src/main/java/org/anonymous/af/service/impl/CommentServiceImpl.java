@@ -51,6 +51,24 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
     }
 
     /**
+     * 将实体类转换为视图对象
+     */
+    private CommentVo convertEntityToVo(CommentEntity entity) {
+        CommentVo vo = new CommentVo();
+        BeanUtil.copyProperties(entity, vo, true);
+        UserEntity userEntity = userService.getById(entity.getUserId());
+        if (userEntity != null) {
+            vo.setUsername(userEntity.getUsername());
+            if (userEntity.getAvatarId() != null) {
+                vo.setAvatarId(userEntity.getAvatarId().toString());
+            }
+        } else {
+            vo.setUsername("用户已注销");
+        }
+        return vo;
+    }
+
+    /**
      * 分页查询评论
      */
     public IPage<CommentVo> getCommentPage(Long pageNum, Long pageSize, Long postId, Long parentId) {
@@ -60,19 +78,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
                 .eq(parentId != null, CommentEntity::getParentId, parentId)
                 .isNull(parentId == null, CommentEntity::getParentId)
                 .orderByAsc(CommentEntity::getCtime);
-        return baseMapper.selectPage(page, queryWrapper).convert(entity -> {
-            CommentVo vo = new CommentVo();
-            BeanUtil.copyProperties(entity, vo, true);
-            UserEntity userEntity = userService.getById(entity.getUserId());
-            if (userEntity != null) {
-                vo.setUsername(userEntity.getUsername());
-                if (userEntity.getAvatarId() != null) {
-                    vo.setAvatarId(userEntity.getAvatarId().toString());
-                }
-            } else {
-                vo.setUsername("用户已注销");
-            }
-            return vo;
-        });
+        return baseMapper.selectPage(page, queryWrapper).convert(this::convertEntityToVo);
     }
 }

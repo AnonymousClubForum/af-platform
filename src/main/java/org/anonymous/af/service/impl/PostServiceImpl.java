@@ -10,16 +10,20 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.anonymous.af.mapper.PostMapper;
 import org.anonymous.af.model.entity.PostEntity;
+import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SavePostRequest;
 import org.anonymous.af.model.response.PostVo;
 import org.anonymous.af.service.CommentService;
 import org.anonymous.af.service.PostService;
+import org.anonymous.af.service.UserService;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> implements PostService {
+    @Resource
+    private UserService userService;
     @Resource
     private CommentService commentService;
 
@@ -53,6 +57,24 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
     }
 
     /**
+     * 将实体类转换为视图对象
+     */
+    private PostVo convertEntityToVo(PostEntity entity) {
+        PostVo vo = new PostVo();
+        BeanUtil.copyProperties(entity, vo, true);
+        UserEntity userEntity = userService.getById(entity.getUserId());
+        if (userEntity != null) {
+            vo.setUsername(userEntity.getUsername());
+            if (userEntity.getAvatarId() != null) {
+                vo.setAvatarId(userEntity.getAvatarId().toString());
+            }
+        } else {
+            vo.setUsername("用户已注销");
+        }
+        return vo;
+    }
+
+    /**
      * 分页查询帖子
      */
     public IPage<PostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent) {
@@ -72,7 +94,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
             if (content.length() > 100) {
                 entity.setContent(content.substring(0, 100));
             }
-            return new PostVo(entity);
+            return convertEntityToVo(entity);
         });
     }
 
@@ -81,6 +103,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
      */
     public PostVo getPostById(Long id) {
         PostEntity postEntity = baseMapper.selectById(id);
-        return new PostVo(postEntity);
+        return convertEntityToVo(postEntity);
     }
 }
