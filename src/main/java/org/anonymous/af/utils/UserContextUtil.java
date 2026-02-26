@@ -11,18 +11,18 @@ public class UserContextUtil {
     private static final ThreadLocal<Long> USER_THREAD_LOCAL = new ThreadLocal<>();
 
     /**
-     * 设置当前线程的用户信息
-     */
-    public static void setUserId(@NotNull Long userId) {
-        USER_THREAD_LOCAL.set(userId);
-    }
-
-    /**
      * 获取当前线程的用户信息
      */
     @NotNull
     public static Long getUserId() {
         return USER_THREAD_LOCAL.get();
+    }
+
+    /**
+     * 设置当前线程的用户信息
+     */
+    public static void setUserId(@NotNull Long userId) {
+        USER_THREAD_LOCAL.set(userId);
     }
 
     /**

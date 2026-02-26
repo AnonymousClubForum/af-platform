@@ -16,6 +16,7 @@ import org.anonymous.af.service.CommentService;
 import org.anonymous.af.service.UserService;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity> implements CommentService {
@@ -36,6 +37,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
     /**
      * 删除评论
      */
+    @Transactional
     public void deleteComment(Long id) {
         baseMapper.deleteById(id);
         baseMapper.delete(new LambdaQueryWrapper<CommentEntity>().eq(CommentEntity::getParentId, id));

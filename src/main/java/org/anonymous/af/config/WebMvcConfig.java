@@ -1,8 +1,8 @@
 package org.anonymous.af.config;
 
+import jakarta.annotation.Resource;
 import org.anonymous.af.interceptor.LogInterceptor;
 import org.anonymous.af.interceptor.TokenInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -12,9 +12,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-    @Autowired
+    @Resource
     private LogInterceptor logInterceptor;
-    @Autowired
+    @Resource
     private TokenInterceptor tokenInterceptor;
 
     @Override

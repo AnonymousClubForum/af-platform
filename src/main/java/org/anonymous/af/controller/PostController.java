@@ -1,18 +1,17 @@
 package org.anonymous.af.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import jakarta.annotation.Resource;
 import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.model.request.SavePostRequest;
 import org.anonymous.af.model.response.PostVo;
-import org.anonymous.af.model.response.SimplePostVo;
 import org.anonymous.af.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/post")
 public class PostController {
-    @Autowired
+    @Resource
     private PostService postService;
 
     @PostMapping("/save")
@@ -39,10 +38,10 @@ public class PostController {
     }
 
     @GetMapping("/get_page")
-    public BaseResponse<IPage<SimplePostVo>> getPostPage(@RequestParam Long pageNum,
-                                                         @RequestParam Long pageSize,
-                                                         @RequestParam(required = false) Long userId,
-                                                         @RequestParam(required = false) String searchContent) {
+    public BaseResponse<IPage<PostVo>> getPostPage(@RequestParam Long pageNum,
+                                                   @RequestParam Long pageSize,
+                                                   @RequestParam(required = false) Long userId,
+                                                   @RequestParam(required = false) String searchContent) {
         return BaseResponse.success(postService.getPostPage(pageNum, pageSize, userId, searchContent));
     }
 }

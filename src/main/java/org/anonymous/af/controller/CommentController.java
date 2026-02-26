@@ -1,17 +1,17 @@
 package org.anonymous.af.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import jakarta.annotation.Resource;
 import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.model.request.SaveCommentRequest;
 import org.anonymous.af.model.response.CommentVo;
 import org.anonymous.af.service.CommentService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/comment")
 public class CommentController {
-    @Autowired
+    @Resource
     private CommentService commentService;
 
     @PostMapping("/save")

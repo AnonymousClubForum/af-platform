@@ -10,20 +10,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.anonymous.af.mapper.PostMapper;
 import org.anonymous.af.model.entity.PostEntity;
-import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SavePostRequest;
 import org.anonymous.af.model.response.PostVo;
-import org.anonymous.af.model.response.SimplePostVo;
 import org.anonymous.af.service.CommentService;
 import org.anonymous.af.service.PostService;
-import org.anonymous.af.service.UserService;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> implements PostService {
-    @Resource
-    private UserService userService;
     @Resource
     private CommentService commentService;
 
@@ -50,6 +46,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
     /**
      * 删除帖子
      */
+    @Transactional
     public void deletePost(Long id) {
         baseMapper.deleteById(id);
         commentService.deleteCommentByPost(id);
@@ -58,7 +55,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
     /**
      * 分页查询帖子
      */
-    public IPage<SimplePostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent) {
+    public IPage<PostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent) {
         Page<PostEntity> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<PostEntity> queryWrapper = new LambdaQueryWrapper<PostEntity>()
                 .eq(userId != null, PostEntity::getUserId, userId);
@@ -71,18 +68,11 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
         }
         queryWrapper.orderByDesc(PostEntity::getUtime);
         return baseMapper.selectPage(page, queryWrapper).convert(entity -> {
-            SimplePostVo vo = new SimplePostVo();
-            BeanUtil.copyProperties(entity, vo, true);
-            UserEntity userEntity = userService.getById(entity.getUserId());
-            if (userEntity != null) {
-                vo.setUsername(userEntity.getUsername());
-                if (userEntity.getAvatarId() != null) {
-                    vo.setAvatarId(userEntity.getAvatarId().toString());
-                }
-            } else {
-                vo.setUsername("用户已注销");
+            String content = entity.getContent();
+            if (content.length() > 100) {
+                entity.setContent(content.substring(0, 100));
             }
-            return vo;
+            return new PostVo(entity);
         });
     }
 
@@ -91,17 +81,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
      */
     public PostVo getPostById(Long id) {
         PostEntity postEntity = baseMapper.selectById(id);
-        PostVo vo = new PostVo();
-        BeanUtil.copyProperties(postEntity, vo, true);
-        UserEntity userEntity = userService.getById(postEntity.getUserId());
-        if (userEntity != null) {
-            vo.setUsername(userEntity.getUsername());
-            if (userEntity.getAvatarId() != null) {
-                vo.setAvatarId(userEntity.getAvatarId().toString());
-            }
-        } else {
-            vo.setUsername("用户已注销");
-        }
-        return vo;
+        return new PostVo(postEntity);
     }
 }

@@ -1,20 +1,20 @@
 package org.anonymous.af.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import jakarta.annotation.Resource;
 import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.model.request.LoginRequest;
 import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.response.LoginResponse;
 import org.anonymous.af.model.response.UserVo;
 import org.anonymous.af.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
-    @Autowired
+    @Resource
     private UserService userService;
 
     @PostMapping("/register")

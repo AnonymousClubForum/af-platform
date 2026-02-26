@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.anonymous.af.model.entity.PostEntity;
 import org.anonymous.af.model.request.SavePostRequest;
 import org.anonymous.af.model.response.PostVo;
-import org.anonymous.af.model.response.SimplePostVo;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,7 +18,7 @@ public interface PostService extends IService<PostEntity> {
 
     void deletePost(Long id);
 
-    IPage<SimplePostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent);
+    IPage<PostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent);
 
     PostVo getPostById(Long id);
 }
