@@ -21,6 +21,8 @@ public class CommentVo {
 
     private String content;
 
+    private CommentVo parentComment;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date ctime;
 

@@ -29,8 +29,7 @@ public class CommentController {
     @GetMapping("/get_page")
     public BaseResponse<IPage<CommentVo>> getCommentPage(@RequestParam Long pageNum,
                                                          @RequestParam Long pageSize,
-                                                         @RequestParam(required = false) Long postId,
-                                                         @RequestParam(required = false) Long parentId) {
-        return BaseResponse.success(commentService.getCommentPage(pageNum, pageSize, postId, parentId));
+                                                         @RequestParam Long postId) {
+        return BaseResponse.success(commentService.getCommentPage(pageNum, pageSize, postId));
     }
 }

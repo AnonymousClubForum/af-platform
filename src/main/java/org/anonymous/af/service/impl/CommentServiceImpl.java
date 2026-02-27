@@ -65,18 +65,21 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
         } else {
             vo.setUsername("用户已注销");
         }
+        if (entity.getParentId() != null) {
+            CommentEntity parentEntity = baseMapper.selectById(entity.getParentId());
+            parentEntity.setParentId(null);
+            vo.setParentComment(convertEntityToVo(parentEntity));
+        }
         return vo;
     }
 
     /**
      * 分页查询评论
      */
-    public IPage<CommentVo> getCommentPage(Long pageNum, Long pageSize, Long postId, Long parentId) {
+    public IPage<CommentVo> getCommentPage(Long pageNum, Long pageSize, Long postId) {
         Page<CommentEntity> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<CommentEntity> queryWrapper = new LambdaQueryWrapper<CommentEntity>()
                 .eq(postId != null, CommentEntity::getPostId, postId)
-                .eq(parentId != null, CommentEntity::getParentId, parentId)
-                .isNull(parentId == null, CommentEntity::getParentId)
                 .orderByAsc(CommentEntity::getCtime);
         return baseMapper.selectPage(page, queryWrapper).convert(this::convertEntityToVo);
     }
