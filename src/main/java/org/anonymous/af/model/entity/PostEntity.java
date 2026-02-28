@@ -14,4 +14,8 @@ public class PostEntity extends BaseEntity {
     private String title;
 
     private String content;
+
+    private Long sectionId;
+
+    private Integer isTop; // 1表示置顶，0表示普通
 }

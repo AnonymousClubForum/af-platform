@@ -41,7 +41,8 @@ public class PostController {
     public BaseResponse<IPage<PostVo>> getPostPage(@RequestParam Long pageNum,
                                                    @RequestParam Long pageSize,
                                                    @RequestParam(required = false) Long userId,
-                                                   @RequestParam(required = false) String searchContent) {
-        return BaseResponse.success(postService.getPostPage(pageNum, pageSize, userId, searchContent));
+                                                   @RequestParam(required = false) String searchContent,
+                                                   @RequestParam(required = false) Long sectionId) {
+        return BaseResponse.success(postService.getPostPage(pageNum, pageSize, userId, searchContent, sectionId));
     }
 }

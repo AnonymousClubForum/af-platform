@@ -77,10 +77,11 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
     /**
      * 分页查询帖子
      */
-    public IPage<PostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent) {
+    public IPage<PostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent, Long sectionId) {
         Page<PostEntity> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<PostEntity> queryWrapper = new LambdaQueryWrapper<PostEntity>()
-                .eq(userId != null, PostEntity::getUserId, userId);
+                .eq(userId != null, PostEntity::getUserId, userId)
+                .eq(sectionId != null, PostEntity::getSectionId, sectionId);
         if (StrUtil.isNotBlank(searchContent)) {
             queryWrapper.and(wrapper -> wrapper
                     .like(PostEntity::getTitle, searchContent)
@@ -88,12 +89,9 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
                     .like(PostEntity::getContent, searchContent)
             );
         }
-        queryWrapper.orderByDesc(PostEntity::getUtime);
+        queryWrapper.orderByDesc(PostEntity::getIsTop).orderByDesc(PostEntity::getUtime);
         return baseMapper.selectPage(page, queryWrapper).convert(entity -> {
-            String content = entity.getContent();
-            if (content.length() > 100) {
-                entity.setContent(content.substring(0, 100));
-            }
+            entity.setContent(null);
             return convertEntityToVo(entity);
         });
     }

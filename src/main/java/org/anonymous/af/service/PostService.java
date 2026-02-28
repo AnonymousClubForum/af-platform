@@ -18,7 +18,7 @@ public interface PostService extends IService<PostEntity> {
 
     void deletePost(Long id);
 
-    IPage<PostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent);
+    IPage<PostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent, Long sectionId);
 
     PostVo getPostById(Long id);
 }

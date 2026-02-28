@@ -23,6 +23,10 @@ public class PostVo {
 
     private String content;
 
+    private Long sectionId;
+
+    private Integer isTop;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date ctime;
 
