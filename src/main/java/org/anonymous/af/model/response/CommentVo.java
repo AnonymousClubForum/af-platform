@@ -21,11 +21,21 @@ public class CommentVo {
 
     private String content;
 
-    private CommentVo parentComment;
+    private ParentCommentVo parentComment;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date ctime;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date utime;
+    @Data
+    public static class ParentCommentVo {
+        @JsonSerialize(using = ToStringSerializer.class)
+        private Long userId;
+
+        private String username;
+
+        private String content;
+
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+        private Date ctime;
+    }
 }

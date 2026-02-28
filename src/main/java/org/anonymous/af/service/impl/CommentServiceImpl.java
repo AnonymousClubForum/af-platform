@@ -16,7 +16,6 @@ import org.anonymous.af.service.CommentService;
 import org.anonymous.af.service.UserService;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity> implements CommentService {
@@ -37,10 +36,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
     /**
      * 删除评论
      */
-    @Transactional
     public void deleteComment(Long id) {
         baseMapper.deleteById(id);
-        baseMapper.delete(new LambdaQueryWrapper<CommentEntity>().eq(CommentEntity::getParentId, id));
     }
 
     /**
@@ -55,7 +52,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
      */
     private CommentVo convertEntityToVo(CommentEntity entity) {
         CommentVo vo = new CommentVo();
-        BeanUtil.copyProperties(entity, vo, true);
+        BeanUtil.copyProperties(entity, vo);
         UserEntity userEntity = userService.getById(entity.getUserId());
         if (userEntity != null) {
             vo.setUsername(userEntity.getUsername());
@@ -66,9 +63,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
             vo.setUsername("用户已注销");
         }
         if (entity.getParentId() != null) {
-            CommentEntity parentEntity = baseMapper.selectById(entity.getParentId());
-            parentEntity.setParentId(null);
-            vo.setParentComment(convertEntityToVo(parentEntity));
+            CommentEntity parentCommentEntity = baseMapper.selectById(entity.getParentId());
+            CommentVo.ParentCommentVo parentCommentVo = new CommentVo.ParentCommentVo();
+            if (parentCommentEntity == null) {
+                parentCommentVo.setContent("评论已删除");
+            } else {
+                BeanUtil.copyProperties(parentCommentEntity, parentCommentVo);
+                UserEntity parentUserEntity = userService.getById(parentCommentEntity.getUserId());
+                parentCommentVo.setUsername(parentUserEntity != null ? parentUserEntity.getUsername() : "用户已注销");
+            }
+            vo.setParentComment(parentCommentVo);
         }
         return vo;
     }
@@ -76,11 +80,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
     /**
      * 分页查询评论
      */
-    public IPage<CommentVo> getCommentPage(Long pageNum, Long pageSize, Long postId) {
+    public IPage<CommentVo> getCommentPage(Long pageNum, Long pageSize, Long postId, Long userId, Boolean isDesc) {
         Page<CommentEntity> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<CommentEntity> queryWrapper = new LambdaQueryWrapper<CommentEntity>()
                 .eq(postId != null, CommentEntity::getPostId, postId)
-                .orderByAsc(CommentEntity::getCtime);
+                .eq(userId != null, CommentEntity::getUserId, userId);
+        if (isDesc != null && isDesc) {
+            queryWrapper.orderByDesc(CommentEntity::getCtime);
+        } else {
+            queryWrapper.orderByAsc(CommentEntity::getCtime);
+        }
         return baseMapper.selectPage(page, queryWrapper).convert(this::convertEntityToVo);
     }
 }

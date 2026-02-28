@@ -18,5 +18,5 @@ public interface CommentService extends IService<CommentEntity> {
 
     void deleteCommentByPost(Long postId);
 
-    IPage<CommentVo> getCommentPage(Long pageNum, Long pageSize, Long postId);
+    IPage<CommentVo> getCommentPage(Long pageNum, Long pageSize, Long postId, Long userId, Boolean isDesc);
 }

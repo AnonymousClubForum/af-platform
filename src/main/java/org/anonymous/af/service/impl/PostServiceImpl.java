@@ -61,7 +61,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
      */
     private PostVo convertEntityToVo(PostEntity entity) {
         PostVo vo = new PostVo();
-        BeanUtil.copyProperties(entity, vo, true);
+        BeanUtil.copyProperties(entity, vo);
         UserEntity userEntity = userService.getById(entity.getUserId());
         if (userEntity != null) {
             vo.setUsername(userEntity.getUsername());
