@@ -7,4 +7,5 @@ public class SavePostRequest {
     private Long id;
     private String title;
     private String content;
+    private Long sectionId;
 }
