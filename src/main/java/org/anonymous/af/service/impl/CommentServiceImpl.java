@@ -1,6 +1,7 @@
 package org.anonymous.af.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -16,6 +17,13 @@ import org.anonymous.af.service.CommentService;
 import org.anonymous.af.service.UserService;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity> implements CommentService {
@@ -48,36 +56,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
     }
 
     /**
-     * 将实体类转换为视图对象
-     */
-    private CommentVo convertEntityToVo(CommentEntity entity) {
-        CommentVo vo = new CommentVo();
-        BeanUtil.copyProperties(entity, vo);
-        UserEntity userEntity = userService.getById(entity.getUserId());
-        if (userEntity != null) {
-            vo.setUsername(userEntity.getUsername());
-            if (userEntity.getAvatarId() != null) {
-                vo.setAvatarId(userEntity.getAvatarId().toString());
-            }
-        } else {
-            vo.setUsername("用户已注销");
-        }
-        if (entity.getParentId() != null) {
-            CommentEntity parentCommentEntity = baseMapper.selectById(entity.getParentId());
-            CommentVo.ParentCommentVo parentCommentVo = new CommentVo.ParentCommentVo();
-            if (parentCommentEntity == null) {
-                parentCommentVo.setContent("评论已删除");
-            } else {
-                BeanUtil.copyProperties(parentCommentEntity, parentCommentVo);
-                UserEntity parentUserEntity = userService.getById(parentCommentEntity.getUserId());
-                parentCommentVo.setUsername(parentUserEntity != null ? parentUserEntity.getUsername() : "用户已注销");
-            }
-            vo.setParentComment(parentCommentVo);
-        }
-        return vo;
-    }
-
-    /**
      * 分页查询评论
      */
     public IPage<CommentVo> getCommentPage(Long pageNum, Long pageSize, Long postId, Long userId, Boolean isDesc) {
@@ -90,6 +68,33 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
         } else {
             queryWrapper.orderByAsc(CommentEntity::getCtime);
         }
-        return baseMapper.selectPage(page, queryWrapper).convert(this::convertEntityToVo);
+        Page<CommentEntity> resultPage = baseMapper.selectPage(page, queryWrapper);
+
+        // 找出所有对应的用户实体
+        Set<Long> userIds = resultPage.getRecords().stream()
+                .map(CommentEntity::getUserId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Map<Long, UserEntity> userMap = CollUtil.isEmpty(userIds) ? new HashMap<>() : userService.listByIds(userIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        UserEntity::getId, Function.identity(), (exist, replace) -> exist)
+                );
+
+        return resultPage.convert(entity -> {
+            CommentVo vo = new CommentVo();
+            BeanUtil.copyProperties(entity, vo);
+
+            // 填充用户信息
+            UserEntity userEntity = userMap.getOrDefault(entity.getUserId(), null);
+            if (userEntity != null) {
+                vo.setUsername(userEntity.getUsername());
+                vo.setAvatarId(userEntity.getAvatarId());
+            } else {
+                vo.setUsername("用户已注销");
+            }
+            return vo;
+        });
     }
 }

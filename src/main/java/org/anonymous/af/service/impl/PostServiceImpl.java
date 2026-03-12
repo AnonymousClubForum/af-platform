@@ -1,6 +1,7 @@
 package org.anonymous.af.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -19,6 +20,13 @@ import org.anonymous.af.service.UserService;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> implements PostService {
@@ -57,24 +65,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
     }
 
     /**
-     * 将实体类转换为视图对象
-     */
-    private PostVo convertEntityToVo(PostEntity entity) {
-        PostVo vo = new PostVo();
-        BeanUtil.copyProperties(entity, vo);
-        UserEntity userEntity = userService.getById(entity.getUserId());
-        if (userEntity != null) {
-            vo.setUsername(userEntity.getUsername());
-            if (userEntity.getAvatarId() != null) {
-                vo.setAvatarId(userEntity.getAvatarId().toString());
-            }
-        } else {
-            vo.setUsername("用户已注销");
-        }
-        return vo;
-    }
-
-    /**
      * 分页查询帖子
      */
     public IPage<PostVo> getPostPage(Long pageNum, Long pageSize, Long userId, String searchContent, Long sectionId) {
@@ -90,9 +80,34 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
             );
         }
         queryWrapper.orderByDesc(PostEntity::getIsTop).orderByDesc(PostEntity::getUtime);
-        return baseMapper.selectPage(page, queryWrapper).convert(entity -> {
-            entity.setContent(null);
-            return convertEntityToVo(entity);
+        Page<PostEntity> resultPage = baseMapper.selectPage(page, queryWrapper);
+
+        // 找出所有对应的用户实体
+        Set<Long> userIds = resultPage.getRecords().stream()
+                .map(PostEntity::getUserId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Map<Long, UserEntity> userMap = CollUtil.isEmpty(userIds) ? new HashMap<>() : userService.listByIds(userIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        UserEntity::getId, Function.identity(), (exist, replace) -> exist)
+                );
+
+        return resultPage.convert(entity -> {
+            PostVo vo = new PostVo();
+            // 排除content字段
+            BeanUtil.copyProperties(entity, vo, "content");
+
+            // 填充用户信息
+            UserEntity userEntity = userMap.getOrDefault(entity.getUserId(), null);
+            if (userEntity != null) {
+                vo.setUsername(userEntity.getUsername());
+                vo.setAvatarId(userEntity.getAvatarId());
+            } else {
+                vo.setUsername("用户已注销");
+            }
+            return vo;
         });
     }
 
@@ -100,7 +115,18 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, PostEntity> impleme
      * 查询帖子详情
      */
     public PostVo getPostById(Long id) {
-        PostEntity postEntity = baseMapper.selectById(id);
-        return convertEntityToVo(postEntity);
+        PostEntity entity = baseMapper.selectById(id);
+        PostVo vo = new PostVo();
+        BeanUtil.copyProperties(entity, vo);
+
+        // 填充用户信息
+        UserEntity userEntity = entity.getUserId() != null ? userService.getById(entity.getUserId()) : null;
+        if (userEntity != null) {
+            vo.setUsername(userEntity.getUsername());
+            vo.setAvatarId(userEntity.getAvatarId());
+        } else {
+            vo.setUsername("用户已注销");
+        }
+        return vo;
     }
 }
