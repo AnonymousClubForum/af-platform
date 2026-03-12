@@ -44,13 +44,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
     /**
      * 删除评论
      */
-    public void deleteComment(Long id) {
-        baseMapper.deleteById(id);
-    }
-
-    /**
-     * 删除评论
-     */
     public void deleteCommentByPost(Long postId) {
         baseMapper.delete(new LambdaQueryWrapper<CommentEntity>().eq(CommentEntity::getPostId, postId));
     }

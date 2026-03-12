@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 public interface CommentService extends IService<CommentEntity> {
     void createComment(SaveCommentRequest request);
 
-    void deleteComment(Long id);
-
     void deleteCommentByPost(Long postId);
 
     IPage<CommentVo> getCommentPage(Long pageNum, Long pageSize, Long postId, Long userId, Boolean isDesc);
