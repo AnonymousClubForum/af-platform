@@ -18,10 +18,7 @@ import org.anonymous.af.service.UserService;
 import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -63,11 +60,26 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
         }
         Page<CommentEntity> resultPage = baseMapper.selectPage(page, queryWrapper);
 
-        // 找出所有对应的用户实体
-        Set<Long> userIds = resultPage.getRecords().stream()
-                .map(CommentEntity::getUserId)
+        Set<Long> parentIds = resultPage.getRecords().stream()
+                .map(CommentEntity::getParentId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
+
+        Map<Long, CommentEntity> commentMap = CollUtil.isEmpty(parentIds) ? new HashMap<>() : baseMapper.selectByIds(parentIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        CommentEntity::getId, Function.identity(), (exist, replace) -> exist)
+                );
+
+        // 找出所有对应的用户实体
+        Set<Long> userIds = new HashSet<>();
+        for (CommentEntity commentEntity : resultPage.getRecords()) {
+            userIds.add(commentEntity.getUserId());
+        }
+        for (CommentEntity commentEntity : commentMap.values()) {
+            userIds.add(commentEntity.getUserId());
+        }
+        userIds.remove(null);
 
         Map<Long, UserEntity> userMap = CollUtil.isEmpty(userIds) ? new HashMap<>() : userService.listByIds(userIds)
                 .stream()
@@ -87,6 +99,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
             } else {
                 vo.setUsername("用户已注销");
             }
+            CommentVo.ParentCommentVo parentCommentVo = new CommentVo.ParentCommentVo();
+            CommentEntity parentCommentEntity = commentMap.getOrDefault(entity.getParentId(), null);
+            if (parentCommentEntity == null) {
+                parentCommentVo.setContent("评论已删除");
+            } else {
+                BeanUtil.copyProperties(parentCommentEntity, parentCommentVo);
+                UserEntity parentUserEntity = userMap.getOrDefault(parentCommentEntity.getUserId(), null);
+                parentCommentVo.setUsername(parentUserEntity != null ? parentUserEntity.getUsername() : "用户已注销");
+            }
+            vo.setParentComment(parentCommentVo);
             return vo;
         });
     }
