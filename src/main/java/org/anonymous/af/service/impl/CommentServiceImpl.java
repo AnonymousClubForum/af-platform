@@ -99,16 +99,18 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
             } else {
                 vo.setUsername("用户已注销");
             }
-            CommentVo.ParentCommentVo parentCommentVo = new CommentVo.ParentCommentVo();
-            CommentEntity parentCommentEntity = commentMap.getOrDefault(entity.getParentId(), null);
-            if (parentCommentEntity == null) {
-                parentCommentVo.setContent("评论已删除");
-            } else {
-                BeanUtil.copyProperties(parentCommentEntity, parentCommentVo);
-                UserEntity parentUserEntity = userMap.getOrDefault(parentCommentEntity.getUserId(), null);
-                parentCommentVo.setUsername(parentUserEntity != null ? parentUserEntity.getUsername() : "用户已注销");
+            if (entity.getParentId() != null) {
+                CommentVo.ParentCommentVo parentCommentVo = new CommentVo.ParentCommentVo();
+                CommentEntity parentCommentEntity = commentMap.getOrDefault(entity.getParentId(), null);
+                if (parentCommentEntity == null) {
+                    parentCommentVo.setContent("评论已删除");
+                } else {
+                    BeanUtil.copyProperties(parentCommentEntity, parentCommentVo);
+                    UserEntity parentUserEntity = userMap.getOrDefault(parentCommentEntity.getUserId(), null);
+                    parentCommentVo.setUsername(parentUserEntity != null ? parentUserEntity.getUsername() : "用户已注销");
+                }
+                vo.setParentComment(parentCommentVo);
             }
-            vo.setParentComment(parentCommentVo);
             return vo;
         });
     }
