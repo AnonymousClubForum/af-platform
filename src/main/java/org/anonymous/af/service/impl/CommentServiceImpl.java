@@ -127,6 +127,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
             if (StrUtil.isBlank(vo.getUsername())) {
                 vo.setUsername("用户已注销");
             }
+            if (vo.getParentId() != null && StrUtil.isBlank(vo.getParentContent())) {
+                vo.setParentContent("评论已删除");
+            }
             return vo;
         });
     }

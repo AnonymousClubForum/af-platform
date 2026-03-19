@@ -19,7 +19,7 @@ public interface CommentMapper extends BaseMapper<CommentEntity> {
             LEFT JOIN t_post p ON p.id = c.post_id
             LEFT JOIN t_comment parent ON parent.id = c.parent_id
             LEFT JOIN t_user u ON u.id = c.user_id
-            WHERE p.user_id = #{user_id} OR parent.user_id = #{user_id}
+            WHERE c.user_id != #{user_id} AND (p.user_id = #{user_id} OR parent.user_id = #{user_id})
             ORDER BY c.ctime DESC
             """)
     IPage<CommentNoticeVo> getCommentNotificationPage(@Param("page") Page<CommentEntity> page,
