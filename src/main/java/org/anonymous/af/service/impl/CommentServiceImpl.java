@@ -2,6 +2,7 @@ package org.anonymous.af.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -12,6 +13,7 @@ import org.anonymous.af.mapper.CommentMapper;
 import org.anonymous.af.model.entity.CommentEntity;
 import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SaveCommentRequest;
+import org.anonymous.af.model.response.CommentNoticeVo;
 import org.anonymous.af.model.response.CommentVo;
 import org.anonymous.af.service.CommentService;
 import org.anonymous.af.service.UserService;
@@ -110,6 +112,20 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentEntity
                     parentCommentVo.setUsername(parentUserEntity != null ? parentUserEntity.getUsername() : "用户已注销");
                 }
                 vo.setParentComment(parentCommentVo);
+            }
+            return vo;
+        });
+    }
+
+    /**
+     * 分页查询某个用户收到的评论
+     */
+    public IPage<CommentNoticeVo> getNotificationPage(Long pageNum, Long pageSize, Long userId) {
+        IPage<CommentNoticeVo> resultPage = baseMapper.getCommentNotificationPage(new Page<>(pageNum, pageSize), userId);
+
+        return resultPage.convert(vo -> {
+            if (StrUtil.isBlank(vo.getUsername())) {
+                vo.setUsername("用户已注销");
             }
             return vo;
         });

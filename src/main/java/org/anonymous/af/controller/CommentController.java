@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import jakarta.annotation.Resource;
 import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.model.request.SaveCommentRequest;
+import org.anonymous.af.model.response.CommentNoticeVo;
 import org.anonymous.af.model.response.CommentVo;
 import org.anonymous.af.service.CommentService;
 import org.springframework.web.bind.annotation.*;
@@ -33,5 +34,12 @@ public class CommentController {
                                                          @RequestParam(required = false) Long userId,
                                                          @RequestParam Boolean isDesc) {
         return BaseResponse.success(commentService.getCommentPage(pageNum, pageSize, postId, userId, isDesc));
+    }
+
+    @GetMapping("/notice/get_page")
+    public BaseResponse<IPage<CommentNoticeVo>> getCommentNotificationPage(@RequestParam Long pageNum,
+                                                                           @RequestParam Long pageSize,
+                                                                           @RequestParam Long userId) {
+        return BaseResponse.success(commentService.getNotificationPage(pageNum, pageSize, userId));
     }
 }

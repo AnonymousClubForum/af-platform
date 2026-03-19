@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.anonymous.af.model.entity.CommentEntity;
 import org.anonymous.af.model.request.SaveCommentRequest;
+import org.anonymous.af.model.response.CommentNoticeVo;
 import org.anonymous.af.model.response.CommentVo;
 import org.springframework.stereotype.Service;
 
@@ -17,4 +18,6 @@ public interface CommentService extends IService<CommentEntity> {
     void deleteCommentByPost(Long postId);
 
     IPage<CommentVo> getCommentPage(Long pageNum, Long pageSize, Long postId, Long userId, Boolean isDesc);
+
+    IPage<CommentNoticeVo> getNotificationPage(Long pageNum, Long pageSize, Long userId);
 }
