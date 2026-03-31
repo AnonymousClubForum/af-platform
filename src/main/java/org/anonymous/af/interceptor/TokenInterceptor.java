@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.anonymous.af.exception.TokenException;
 import org.anonymous.af.utils.JwtUtil;
 import org.anonymous.af.utils.UserContextUtil;
@@ -15,7 +14,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * 令牌校验拦截器：解析Token，获取用户信息并放入ThreadLocal
  */
 @Component
-@Slf4j
 public class TokenInterceptor implements HandlerInterceptor {
     @Resource
     private JwtUtil jwtUtil;

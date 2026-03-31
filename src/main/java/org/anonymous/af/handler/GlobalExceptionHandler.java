@@ -1,7 +1,10 @@
-package org.anonymous.af.exception;
+package org.anonymous.af.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.anonymous.af.common.BaseResponse;
+import org.anonymous.af.exception.AfException;
+import org.anonymous.af.exception.ThirdPartyException;
+import org.anonymous.af.exception.TokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,7 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponse<?> handleIllegalArgumentException(IllegalArgumentException e) {
-        log.error("参数错误异常：", e);
+        log.error("参数错误异常: {}", e.getMessage());
         return BaseResponse.badRequest(e.getMessage());
     }
 
@@ -30,7 +33,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TokenException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse<?> handleTokenException(TokenException e) {
-        log.error("用户信息校验异常：", e);
+        log.error("用户信息校验异常: {}", e.getMessage());
         return BaseResponse.error(e.getMessage());
     }
 
@@ -40,7 +43,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ThirdPartyException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public BaseResponse<?> handleThirdPartyException(ThirdPartyException e) {
-        log.error("第三方请求错误异常：", e);
+        log.error("第三方请求错误异常: {}", e.getMessage());
         return BaseResponse.error(e.getMessage());
     }
 
@@ -50,7 +53,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AfException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public BaseResponse<?> handleAfException(AfException e) {
-        log.error("业务逻辑异常：", e);
+        log.error("业务逻辑异常: {}", e.getMessage());
         return BaseResponse.error(e.getMessage());
     }
 
@@ -60,7 +63,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public BaseResponse<?> handleException(Exception e) {
-        log.error("系统异常：", e);
+        log.error("系统异常: ", e);
         return BaseResponse.error("服务器内部错误：" + e.getMessage());
     }
 }
