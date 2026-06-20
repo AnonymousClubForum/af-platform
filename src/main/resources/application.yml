@@ -3,10 +3,6 @@ spring:
     active: prod
   application:
     name: af-platform
-  cloud:
-    service-registry:
-      auto-registration:
-        enabled: false
   datasource:
     username: root
     password: Anonymous1234
@@ -27,10 +23,7 @@ jwt:
 
 org:
   anonymous:
-    storage-config:
-      download-file: /file/download
-      upload-file: /file/upload
-      url: af-storage:8080
+    root-save-path: "af-storage"
 
 server:
   port: 8080

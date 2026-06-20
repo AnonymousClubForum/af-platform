@@ -8,12 +8,5 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "org.anonymous")
 public class AfProperties {
-    private StorageConfig storageConfig;
-
-    @Data
-    public static class StorageConfig {
-        private String url;
-        private String uploadFile;
-        private String downloadFile;
-    }
+    private String rootSavePath;
 }

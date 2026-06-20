@@ -24,6 +24,9 @@ public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         response.setCharacterEncoding("UTF-8");
+        if (request.getRequestURL().toString().endsWith("/file/download")) { // 跳过文件下载检查
+            return true;
+        }
         // 获取请求头中的Token
         String token = request.getHeader("Authorization");
         if (StrUtil.isBlank(token)) {

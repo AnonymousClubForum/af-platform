@@ -16,8 +16,8 @@ import org.anonymous.af.model.entity.UserEntity;
 import org.anonymous.af.model.request.SaveUserRequest;
 import org.anonymous.af.model.response.LoginResponse;
 import org.anonymous.af.model.response.UserVo;
+import org.anonymous.af.service.FileService;
 import org.anonymous.af.service.UserService;
-import org.anonymous.af.service.remote.StorageService;
 import org.anonymous.af.utils.JwtUtil;
 import org.anonymous.af.utils.PasswordEncoderUtil;
 import org.anonymous.af.utils.UserContextUtil;
@@ -31,9 +31,9 @@ import java.util.Arrays;
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> implements UserService {
     @Resource
-    private StorageService storageService;
-    @Resource
     private JwtUtil jwtUtil;
+    @Resource
+    private FileService fileService;
 
     public IPage<UserVo> getPage(Long pageNum, Long pageSize, String username) {
         return baseMapper.selectPage(new Page<>(pageNum, pageSize),
@@ -139,10 +139,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      * 上传用户头像
      */
     public String uploadAvatar(MultipartFile file) throws IOException {
-        Long avatarId = storageService.uploadFile(file);
+        String avatarId = fileService.uploadFile(file);
         UserEntity userEntity = getById(UserContextUtil.getUserId());
-        userEntity.setAvatarId(avatarId);
+        userEntity.setAvatarId(Long.valueOf(avatarId));
         baseMapper.updateById(userEntity);
-        return avatarId.toString();
+        return avatarId;
     }
 }
