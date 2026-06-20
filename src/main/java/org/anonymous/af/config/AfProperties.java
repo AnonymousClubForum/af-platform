@@ -12,6 +12,7 @@ public class AfProperties {
 
     @Data
     public static class StorageConfig {
+        private String url;
         private String uploadFile;
         private String downloadFile;
     }

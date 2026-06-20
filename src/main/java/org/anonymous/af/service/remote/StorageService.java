@@ -1,61 +1,44 @@
 package org.anonymous.af.service.remote;
 
-import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.lang.TypeReference;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.json.JSONUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.anonymous.af.common.BaseResponse;
 import org.anonymous.af.config.AfProperties;
+import org.anonymous.af.exception.AfException;
 import org.anonymous.af.exception.ThirdPartyException;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.net.URI;
-import java.util.List;
 
 @Service
 @Slf4j
 public class StorageService {
     @Resource
     private AfProperties afProperties;
-    @Resource
-    private DiscoveryClient discoveryClient;
-    @Resource
-    private RestTemplate restTemplate;
 
     /**
      * 上传文件
      */
     public Long uploadFile(MultipartFile file) {
         log.info("UploadFile {}", file.getOriginalFilename());
-        List<ServiceInstance> instances = discoveryClient.getInstances("af-storage");
-        ServiceInstance instance = instances.get(RandomUtil.randomInt(instances.size()));
-        MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
-        formData.add("file", file.getResource());
-        ResponseEntity<BaseResponse<String>> response = restTemplate.exchange(
-                URI.create(instance.getUri() + afProperties.getStorageConfig().getUploadFile()),
-                HttpMethod.POST,
-                new HttpEntity<>(formData),
-                new ParameterizedTypeReference<>() {
-                }
-        );
-        log.info("uploadFile response: {}", response);
-        if (!response.getStatusCode().equals(HttpStatus.OK) || response.getBody() == null) {
-            throw new ThirdPartyException("请求错误");
+        try (HttpResponse response = HttpRequest.post(
+                        afProperties.getStorageConfig().getUrl() + afProperties.getStorageConfig().getUploadFile()
+                )
+                .form("file", file).execute()) {
+            log.info("uploadFile response: {}", response);
+            String responseBody = response.body();
+            BaseResponse<String> baseResponse = JSONUtil.toBean(responseBody, new TypeReference<>() {
+            }, false);
+            if (!baseResponse.getCode().equals(HttpStatus.OK.value()) || baseResponse.getData() == null) {
+                throw new AfException("请求错误");
+            }
+            return Long.valueOf(baseResponse.getData());
+        } catch (Exception e) {
+            throw new ThirdPartyException(e.getMessage());
         }
-        String fileId = response.getBody().getData();
-        if (fileId == null) {
-            throw new ThirdPartyException("请求返回为空");
-        }
-        return Long.valueOf(fileId);
     }
 }

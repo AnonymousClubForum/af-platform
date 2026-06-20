@@ -6,10 +6,7 @@ spring:
   cloud:
     service-registry:
       auto-registration:
-        enabled: true
-    nacos:
-      username: nacos
-      password: nacos
+        enabled: false
   datasource:
     username: root
     password: Anonymous1234
@@ -33,6 +30,7 @@ org:
     storage-config:
       download-file: /file/download
       upload-file: /file/upload
+      url: af-storage:8080
 
 server:
   port: 8080

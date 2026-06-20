@@ -1,6 +1,8 @@
 spring:
-  cloud:
-    nacos:
-      server-addr: nacos:8848
   datasource:
     url: jdbc:mysql://mysql:3306/af_platform?createDatabaseIfNotExist=true
+
+org:
+  anonymous:
+    storage-config:
+      url: af-storage:8080

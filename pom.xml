@@ -19,7 +19,6 @@
         <lombok.version>1.18.42</lombok.version>
         <hutool.version>5.8.40</hutool.version>
         <mysql.version>9.3.0</mysql.version>
-        <nacos.discovery.version>2023.0.3.4</nacos.discovery.version>
         <mybatisplus.version>3.5.9</mybatisplus.version>
         <jjwt.version>0.12.3</jjwt.version>
         <maven.compiler.version>3.14.1</maven.compiler.version>
@@ -75,11 +74,10 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>${mysql.version}</version>
         </dependency>
-        <!-- nacos -->
+        <!-- security -->
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <version>${nacos.discovery.version}</version>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
         </dependency>
         <!-- MyBatis -->
         <dependency>
