@@ -24,6 +24,7 @@ import org.anonymous.af.utils.UserContextUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 @Service
@@ -137,7 +138,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     /**
      * 上传用户头像
      */
-    public String uploadAvatar(MultipartFile file) {
+    public String uploadAvatar(MultipartFile file) throws IOException {
         Long avatarId = storageService.uploadFile(file);
         UserEntity userEntity = getById(UserContextUtil.getUserId());
         userEntity.setAvatarId(avatarId);

@@ -9,6 +9,8 @@ import org.anonymous.af.model.response.UserVo;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 /**
  * 用户服务接口
  */
@@ -24,5 +26,5 @@ public interface UserService extends IService<UserEntity> {
 
     UserVo getUser(Long id);
 
-    String uploadAvatar(MultipartFile file);
+    String uploadAvatar(MultipartFile file) throws IOException;
 }

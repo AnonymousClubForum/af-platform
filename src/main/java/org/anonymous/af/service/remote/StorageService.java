@@ -1,5 +1,6 @@
 package org.anonymous.af.service.remote;
 
+import cn.hutool.core.io.resource.BytesResource;
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
@@ -14,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @Service
 @Slf4j
 public class StorageService {
@@ -23,12 +26,13 @@ public class StorageService {
     /**
      * 上传文件
      */
-    public Long uploadFile(MultipartFile file) {
+    public Long uploadFile(MultipartFile file) throws IOException {
+        byte[] fileBytes = file.getBytes();
+        String fileName = file.getOriginalFilename();
+        BytesResource fileResource = new BytesResource(fileBytes, fileName);
         log.info("UploadFile {}", file.getOriginalFilename());
-        try (HttpResponse response = HttpRequest.post(
-                        afProperties.getStorageConfig().getUrl() + afProperties.getStorageConfig().getUploadFile()
-                )
-                .form("file", file).execute()) {
+        try (HttpResponse response = HttpRequest.post(afProperties.getStorageConfig().getUrl()
+                        + afProperties.getStorageConfig().getUploadFile()).form("file", fileResource).execute()) {
             log.info("uploadFile response: {}", response);
             String responseBody = response.body();
             BaseResponse<String> baseResponse = JSONUtil.toBean(responseBody, new TypeReference<>() {
