@@ -11,6 +11,8 @@ import org.anonymous.af.service.UserService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
@@ -47,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/avatar/upload")
-    public BaseResponse<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
+    public BaseResponse<String> uploadAvatar(@RequestParam("file") MultipartFile file) throws IOException {
         return BaseResponse.success(userService.uploadAvatar(file));
     }
 }
